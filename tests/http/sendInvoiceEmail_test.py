@@ -5,6 +5,6 @@ from config import url
 
 def test_basic():
     file = {'file': open('./tests/files/AUInvoice.xml', 'rb')}
-    response = requests.post(f"{url}/sendinvoice/email", files=file)
+    response = requests.post(f"{url}/sendinvoice", files=file)
     print(response.text)
     assert response.status_code == 200
