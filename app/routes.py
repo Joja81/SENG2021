@@ -1,6 +1,6 @@
 from crypt import methods
 import json
-from app import ublExtractor
+from app import ublExtractor, healthCheck
 from flask import current_app as app, request
 
 @app.route("/", methods = ["GET"])
@@ -14,3 +14,9 @@ def sendInvoiceEmail():
     contacts = ublExtractor.customerContact(xml)
     #email(contacts) waiting for send email implementation
     return json.dumps("Communication report") #waiting for communication report implementation
+
+@app.route("/HealthCheck", methods = ["GET"])
+def getHealthCheck():
+    healthInfo = healthCheck.healthCheckInfo()
+    return dumps(healthInfo)
+
