@@ -21,6 +21,16 @@ class Call(db.Model):
     timeCalled = Column(DateTime(timezone=True), server_default=func.now())
 
     userAuth = Column(Boolean, nullable = False)
+
+class Session(db.Model):
+    __tablename__ = "sessions"
+    
+    id = Column(Integer, primary_key = True)
+    
+    createdTime = Column(DateTime(timezone=True), server_default=func.now())
+    
+    userId = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="sessions")
     
 class User(db.Model):
     __tablename__ = "users"
@@ -34,3 +44,5 @@ class User(db.Model):
     password = Column(String(100), nullable = False)
     
     calls = relationship("Call", order_by=Call.id, back_populates="user")
+    
+    sessions = relationship("Session", order_by=Session.id, back_populates="user")
