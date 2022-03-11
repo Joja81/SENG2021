@@ -1,7 +1,8 @@
-from crypt import methods
 import json
 from flask import current_app as app, request
 from app import email
+
+from app.models import db, User, Call
 
 @app.route("/", methods = ["GET"])
 def test():
