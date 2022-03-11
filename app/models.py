@@ -1,4 +1,5 @@
 import datetime
+from enum import unique
 from sqlalchemy import Column, Integer
 from app import db
 
@@ -28,6 +29,8 @@ class User(db.Model):
     
     email = Column(String(320), nullable = False, unique = True)
     
-    token = Column(String(100), nullable = False, unique = True)
+    username = Column(String(100), nullable = False, unique = True)
+    
+    password = Column(String(100), nullable = False)
     
     calls = relationship("Call", order_by=Call.id, back_populates="user")

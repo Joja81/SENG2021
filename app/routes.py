@@ -1,6 +1,7 @@
 import json
 from flask import current_app as app, request
 from app import email
+from app.authentication import create_user
 
 from app.models import db, User, Call
 
@@ -14,3 +15,8 @@ def sendInvoiceEmail():
     xml = XML.read()
     email.send_email(xml)
     return json.dumps("Communication report") #waiting for communication report implementation
+
+@app.route("/createNewUser", methods = ["POST"])
+def createNewUser():
+    data = request.get_json()
+    return json.dumps(create_user(data))
