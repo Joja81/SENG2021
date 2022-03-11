@@ -1,6 +1,5 @@
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
-from pydoc import plain
 import re
 from app.error import InputError
 import smtplib
@@ -9,6 +8,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
 
+mail = smtplib.SMTP(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'))
+mail.starttls()
+mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
 
 def validate_email(email):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
@@ -35,18 +37,28 @@ def send_email(xml):
 
     #create email
     msg = MIMEMultipart()
-    msg['Subject'] = (f'URGENT: Invoice from {contacts["bill_name"]}')
+    msg['Subject'] = (f'Invoice from {contacts["bill_name"]}')
     msg['From'] = (f'{contacts["bill_email"]}')
     msg['To'] = (f'{contacts["cust_email"]}')
-    body = MIMEText(f'{contacts["cust_name"]}, \nYou have a new invoice! \nKind regards, \n{contacts["bill_name"]} \n{contacts["bill_email"]}.\n\n', 'plain')
+    message = f"""
+        <html>
+            <head></head>
+            <body>
+                <p>Hello {contacts["cust_name"]},<br>
+                    Attached is your invoice.<br>
+                    Kind regards,<br>
+                    {contacts["bill_name"]} <br>
+                    {contacts["bill_email"]}.
+                </p>
+            </body>
+        </html>
+    """
+
+    body = MIMEText(message,'HTML')
     msg.attach(body)
     msg.attach(MIMEApplication(xml, Name='invoice.xml'))
-    
-    
-    mail = smtplib.SMTP(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'))
-    mail.starttls()
-    mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
-
     mail.sendmail(msg['From'], msg['To'], msg.as_string())
 
+def exit():
     mail.quit()
+    
