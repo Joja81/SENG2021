@@ -1,3 +1,4 @@
+import enviro
 import config
 from app import init_app, email
 from flask import Flask
