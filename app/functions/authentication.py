@@ -1,3 +1,4 @@
+import hashlib
 import os
 from pydoc import describe
 
@@ -45,6 +46,8 @@ def create_user(request):
     if len(request['password']) > 100 or len(request['password']) < 5:
         raise InputError(description="Password is invalid. Must be 5-100 characters long")
     
+    password = hash(request['password'])
+    
     # Check for duplicate email
     if User.query.filter(User.email == request['email']).count() != 0:
         raise InputError(description="Email is already in use")
@@ -54,7 +57,7 @@ def create_user(request):
         raise InputError(description="Username is already in use")
     
     #Create new user
-    new_user = User(email = request['email'], username = request['username'], password = request['password'])
+    new_user = User(email = request['email'], username = request['username'], password = password)
     
     db.session.add(new_user)
     db.session.commit()
@@ -78,6 +81,8 @@ def create_session(username, password):
         'token' : (String)
     }
     """
+    
+    password = hash(password)
     
     user = User.query.filter(User.username == username, User.password == password).first()
     
@@ -147,3 +152,10 @@ def check_token(token):
         raise InputError(description="Session does not exist")
     
     return session.userId
+
+def hash(input):
+    '''
+    Generates hash using sha256 and returns as string
+    '''
+
+    return hashlib.sha256(input.encode()).hexdigest()
