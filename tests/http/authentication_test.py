@@ -134,3 +134,7 @@ def test_working_session():
     resp = request.post(url + "/endsession", json = {'token' : token})
     
     assert resp.status_code == 200
+    
+    resp = request.post(url + "/endsession", json = {'token' : token})
+    
+    assert resp.status_code == 400
