@@ -2,7 +2,7 @@ from crypt import methods
 import json
 from flask import current_app as app, request
 from app.functions import email
-from app.functions.authentication import create_session, create_user, remove_session
+from app.functions.authentication import check_token, create_session, create_user, remove_session
 
 from app.models import db, User, Call
 
@@ -12,6 +12,10 @@ def test():
 
 @app.route("/sendInvoice", methods = ["POST"])
 def sendInvoiceEmail():
+    #Check authentication
+    token = request.headers.get('token')
+    check_token(token)
+    
     XML = request.files.get('file')
     xml = XML.read()
     email.send_email(xml)

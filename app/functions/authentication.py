@@ -122,3 +122,28 @@ def remove_session(token):
     db.session.commit()
     
     return {}
+
+def check_token(token):
+    """
+    Checks if token is valid and returns user id if it is.
+
+    Parameters
+    ----------
+    token (String)
+
+    Returns
+    -------
+    None
+    """
+    
+    try:
+        data = jwt.decode(token, SECRET, algorithms=['HS256'])
+    except BaseException as all_errors:
+        raise AccessError(description= "Token is not valid") from all_errors
+    
+    session = Session.query.get(data['session_id'])
+    
+    if session == None:
+        raise InputError(description="Session does not exist")
+    
+    return session.userId
