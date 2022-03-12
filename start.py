@@ -1,6 +1,7 @@
 import enviro
 import config
-from app import init_app, email
+from app import init_app
+from app.functions import email
 from flask import Flask
 import signal
 

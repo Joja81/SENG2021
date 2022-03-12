@@ -1,8 +1,8 @@
 from crypt import methods
 import json
 from flask import current_app as app, request
-from app import email
-from app.authentication import create_session, create_user, remove_session
+from app.functions import email
+from app.functions.authentication import create_session, create_user, remove_session
 
 from app.models import db, User, Call
 
