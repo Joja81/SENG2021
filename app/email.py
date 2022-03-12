@@ -1,23 +1,26 @@
+from datetime import datetime
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 import re
+from SENG2021.app.commReport import communication_report
 from app.error import InputError
 import smtplib
 from app import ublExtractor
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
+import sys
 
 mail = smtplib.SMTP(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'))
 mail.starttls()
 mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
 
-def validate_email(email):
+def validate_email(email, timer_start):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
     if not (re.fullmatch(email_regex,email)):
-        raise InputError(description='email is not of valid format')
+        raise InputError(description=communication_report([1], timer_start))
 
-def send_email(xml):
+def send_email(xml: str, timer_start: datetime):
     """
     Sends UBL invoice to the first ``cac:AccountingCustomerParty`` entry 
     in said UBL.
@@ -32,6 +35,10 @@ def send_email(xml):
     """
     
     contacts = ublExtractor.customerContact(xml)
+
+    # check size of xml
+    if (sys.getsizeof(xml) > 10000):
+        raise InputError(description=communication_report([2], timer_start))
     
     validate_email(contacts["cust_email"])
 

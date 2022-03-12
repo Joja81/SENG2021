@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from flask import current_app as app, request
 from app import email
@@ -12,5 +13,5 @@ def test():
 def sendInvoiceEmail():
     XML = request.files.get('file')
     xml = XML.read()
-    email.send_email(xml)
+    email.send_email(xml, datetime.now())
     return json.dumps("Communication report") #waiting for communication report implementation
