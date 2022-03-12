@@ -1,7 +1,14 @@
-from app.email import validate_email
-from app.error import InputError
-from app.models import User, db
+import os
+from pydoc import describe
 
+from sqlalchemy import desc
+from app.email import validate_email
+from app.error import AccessError, InputError
+from app.models import Session, User, db
+
+import jwt
+
+SECRET = os.environ.get('SECRET')
 
 def create_user(request):
     """
@@ -25,7 +32,6 @@ def create_user(request):
     {
         'success' : (Boolean)
     }
-
     """
 
     # Check for valid email
@@ -54,3 +60,65 @@ def create_user(request):
     db.session.commit()
     
     return {'success' : True}
+
+def create_session(username, password):
+    """
+    Checks user login credentials and creates a session for them if valid.
+
+    Raises issue if login details are invalid.
+
+    Parameters
+    ----------
+    username (String)
+    password (String)
+
+    Returns
+    -------
+    {
+        'token' : (String)
+    }
+    """
+    
+    user = User.query.filter(User.username == username, User.password == password).first()
+    
+    if user is None:
+        raise InputError(description="Login details are invalid")
+    
+    new_session = Session(user = user)
+    
+    db.session.add(new_session)
+    db.session.commit()
+    
+    token = jwt.encode({'username' : user.username, 'session_id' : new_session.id}, SECRET,  algorithm='HS256')
+    
+    return {'token' : token}
+
+def remove_session(token):
+    """
+    Ends session if the token is valid.
+
+    Raises issue if invalid token.
+
+    Parameters
+    ----------
+    token (String)
+
+    Returns
+    -------
+    {}
+    """
+    
+    try:
+        data = jwt.decode(token, SECRET, algorithms=['HS256'])
+    except BaseException as all_errors:
+        raise AccessError(description= "Token is not valid") from all_errors
+    
+    session = Session.query.get(data['session_id'])
+    
+    if session == None:
+        raise InputError(description="Session does not exist")
+    
+    db.session.delete(session)
+    db.session.commit()
+    
+    return {}

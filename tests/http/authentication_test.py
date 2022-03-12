@@ -16,7 +16,7 @@ import pytest
 def test_invalid_email():
 
     resp = requests.post(
-        url + "/createNewUser",
+        url + "createNewUser",
         json={"email": "email",
               "username": "username",
               "password": "password"})
@@ -27,7 +27,7 @@ def test_invalid_email():
 def test_invalid_username():
     
     # Too short username
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={
                                  "email": "email@email.com",
                                  "username": "1234",
@@ -36,7 +36,7 @@ def test_invalid_username():
     assert resp.status_code == 400
     
     #Too long username
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={"email": "email@email.com",
                                    "username": "24321432142341234123412341234123lk4j123l4j1l32jd41kl;3d4j12lk;3d4j12l3d4;kj12l3;d41j2k;l3d4j123lk;d4j",
                                    "password": "password"})
@@ -46,7 +46,7 @@ def test_invalid_username():
 def test_invalid_password():
     
     # Too short password
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={
                                  "email": "email@email.com",
                                  "username": "username",
@@ -55,7 +55,7 @@ def test_invalid_password():
     assert resp.status_code == 400
     
     #Too long password
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={"email": "email@email.com",
                                    "username": "username",
                                    "password": "24321432142341234123412341234123lk4j123l4j1l32jd41kl;3d4j12lk;3d4j12l3d4;kj12l3;d41j2k;l3d4j123lk;d4j"})
@@ -64,7 +64,7 @@ def test_invalid_password():
 
 def test_duplicate_email():
     
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={
                                  "email": "email@email.com",
                                  "username": "Username",
@@ -72,7 +72,7 @@ def test_duplicate_email():
 
     assert resp.status_code == 200
     
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={
                                  "email": "email@email.com",
                                  "username": "Username",
@@ -82,7 +82,7 @@ def test_duplicate_email():
 
 def test_working():
     
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={
                                  "email": "email2@email.com",
                                  "username": "Username2",
@@ -100,41 +100,41 @@ def test_working():
 
 def test_invalid_login():
     # Invalid email
-    resp = request.get(url + "/newsession", params = {'username' : "dfasfasdfas", 'password' : "dfasdfasfas"})
+    resp = requests.post(url + "newSession", json = {'username' : "dfasfasdfas", 'password' : "dfasdfasfas"})
     
     assert resp.status_code == 400
     
-    resp = requests.post(url + "/createNewUser",
+    resp = requests.post(url + "createNewUser",
                              json={
                                  "email": "email3@email.com",
                                  "username": "Username3",
                                  "password": "password"})
 
-    resp = request.get(url + "/newsession", params = {'username' : "Username3", 'password' : "dfasdfasfas"})
+    resp = requests.post(url + "newSession", json = {'username' : "Username3", 'password' : "dfasdfasfas"})
     
     assert resp.status_code == 400
 
 def test_invalid_token():
-    resp = request.post(url + "/endsession", json = {'token' : "invalid_token"})
+    resp = requests.post(url + "endSession", json = {'token' : "invalid_token"})
     assert resp.status_code == 403
 
 def test_working_session():
-    requests.post(url + "/createNewUser",
+    requests.post(url + "createNewUser",
                              json={
                                  "email": "email4@email.com",
                                  "username": "Username4",
                                  "password": "password"})
     
-    resp = request.get(url + "/newsession", params = {'username' : "Username4", 'password' : "password"})
+    resp = requests.post(url + "newSession", json = {'username' : "Username4", 'password' : "password"})
     
     assert resp.status_code == 200
     
     token = json.loads(resp.text)['token']
     
-    resp = request.post(url + "/endsession", json = {'token' : token})
+    resp = requests.post(url + "endSession", json = {'token' : token})
     
     assert resp.status_code == 200
     
-    resp = request.post(url + "/endsession", json = {'token' : token})
+    resp = requests.post(url + "endSession", json = {'token' : token})
     
     assert resp.status_code == 400

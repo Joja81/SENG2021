@@ -1,7 +1,8 @@
+from crypt import methods
 import json
 from flask import current_app as app, request
 from app import email
-from app.authentication import create_user
+from app.authentication import create_session, create_user, remove_session
 
 from app.models import db, User, Call
 
@@ -9,7 +10,7 @@ from app.models import db, User, Call
 def test():
     return json.dumps("Working")
 
-@app.route("/sendinvoice", methods = ["POST"])
+@app.route("/sendInvoice", methods = ["POST"])
 def sendInvoiceEmail():
     XML = request.files.get('file')
     xml = XML.read()
@@ -20,3 +21,16 @@ def sendInvoiceEmail():
 def createNewUser():
     data = request.get_json()
     return json.dumps(create_user(data))
+
+@app.route("/newSession", methods = ["POST"])
+def newSession():
+    
+    data = request.get_json()
+    
+    return json.dumps(create_session(data['username'], data['password']))
+
+@app.route("/endSession", methods = ['POST'])
+def endSession():
+    data = request.get_json()
+    
+    return json.dumps(remove_session(data['token']))
