@@ -14,7 +14,5 @@ def graceful_exit(*args):
 app = init_app()
 
 if __name__ == "__main__":
-    print(os.environ.get("ON_HEROKU"))
-    
     signal.signal(signal.SIGINT, graceful_exit)
     app.run(port = config.port, debug = True)
