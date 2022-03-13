@@ -4,6 +4,7 @@ from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request
 from app.functions import emailSystem
 from app.functions.authentication import check_token, create_session, create_user, remove_session
+from app.functions.log import log_health_check
 
 import subprocess
 
@@ -47,5 +48,5 @@ def endSession():
 @app.route("/healthCheck", methods = ["GET"])
 def getHealthCheck():
     healthInfo = healthCheck.healthCheckInfo()
+    log_health_check()
     return json.dumps(healthInfo)
-
