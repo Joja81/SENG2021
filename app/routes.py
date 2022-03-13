@@ -21,7 +21,7 @@ def sendInvoiceEmail():
     XML = request.files.get('file')
     xml = XML.read() 
     commReport = emailSystem.send_email(xml, datetime.now())
-    return json.dumps(commReport)
+    return commReport
 
 @app.route("/createNewUser", methods = ["POST"])
 def createNewUser():
