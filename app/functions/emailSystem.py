@@ -5,9 +5,9 @@ from email.mime.text import MIMEText
 from pickle import TRUE
 import re
 from app.commReport import communication_report
-from app.error import InputError
+from app.functions.error import InputError
 import smtplib
-from app import ublExtractor
+from app.functions import ublExtractor
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os

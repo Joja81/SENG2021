@@ -1,8 +1,10 @@
 from datetime import datetime
+from crypt import methods
 import json
-from app import ublExtractor, healthCheck
+from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request
-from app import email
+from app.functions import emailSystem
+from app.functions.authentication import check_token, create_session, create_user, remove_session
 
 from app.models import db, User, Call
 
@@ -10,14 +12,35 @@ from app.models import db, User, Call
 def test():
     return json.dumps("Working")
 
-@app.route("/sendinvoice", methods = ["POST"])
+@app.route("/sendInvoice", methods = ["POST"])
 def sendInvoiceEmail():
+    #Check authentication
+    token = request.headers.get('token')
+    check_token(token)
+    
     XML = request.files.get('file')
     xml = XML.read() 
     commReport = email.send_email(xml, datetime.now())
     return json.dumps(commReport)
 
-@app.route("/HealthCheck", methods = ["GET"])
+@app.route("/createNewUser", methods = ["POST"])
+def createNewUser():
+    data = request.get_json()
+    return json.dumps(create_user(data))
+
+@app.route("/newSession", methods = ["POST"])
+def newSession():
+    
+    data = request.get_json()
+    
+    return json.dumps(create_session(data['username'], data['password']))
+
+@app.route("/endSession", methods = ['POST'])
+def endSession():
+    data = request.get_json()
+    
+    return json.dumps(remove_session(data['token']))
+@app.route("/healthCheck", methods = ["GET"])
 def getHealthCheck():
     healthInfo = healthCheck.healthCheckInfo()
     return json.dumps(healthInfo)
