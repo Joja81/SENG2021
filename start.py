@@ -1,5 +1,5 @@
 import config
-import enviro
+import enviro # pylint: disable=import-error
 from app import init_app, email
 from flask import Flask
 import signal
