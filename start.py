@@ -1,4 +1,4 @@
-import enviro
+import environ
 import config
 from app import init_app
 from app.functions import email

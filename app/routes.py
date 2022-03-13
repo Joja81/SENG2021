@@ -1,5 +1,6 @@
 from crypt import methods
 import json
+from app import ublExtractor, healthCheck
 from flask import current_app as app, request
 from app.functions import email
 from app.functions.authentication import check_token, create_session, create_user, remove_session
@@ -18,6 +19,7 @@ def sendInvoiceEmail():
     
     XML = request.files.get('file')
     xml = XML.read()
+    
     email.send_email(xml)
     return json.dumps("Communication report") #waiting for communication report implementation
 
@@ -38,3 +40,8 @@ def endSession():
     data = request.get_json()
     
     return json.dumps(remove_session(data['token']))
+@app.route("/HealthCheck", methods = ["GET"])
+def getHealthCheck():
+    healthInfo = healthCheck.healthCheckInfo()
+    return json.dumps(healthInfo)
+

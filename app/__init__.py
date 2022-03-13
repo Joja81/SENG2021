@@ -2,6 +2,9 @@ from json import dumps
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+startTime = datetime.now()
 
 db = SQLAlchemy()
 
@@ -12,6 +15,8 @@ def init_app():
     app.config.from_object('config.Config')
     app.register_error_handler(Exception, defaultHandler)
     
+    startTime = datetime.now() # time the server was started
+
     CORS(app)
 
     db.init_app(app)
