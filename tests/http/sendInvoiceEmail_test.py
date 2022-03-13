@@ -15,6 +15,7 @@ def test_invalid_auth():
 
 
 def test_basic():
+<<<<<<< HEAD
 
     token = create_user()
 
@@ -40,3 +41,11 @@ def create_user():
     assert resp.status_code == 200
 
     return json.loads(resp.text)['token']
+=======
+    
+    with open('./tests/files/AUInvoice.xml', 'rb') as new_file:
+        file = {'file': new_file}
+        response = requests.post(f"{url}/sendinvoice", files=file)
+        print(response.text)
+        assert response.status_code == 200
+>>>>>>> main

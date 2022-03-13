@@ -1,4 +1,4 @@
-import environ
+import enviro # pylint: disable=import-error
 import config
 from app import init_app
 from app.functions import email
