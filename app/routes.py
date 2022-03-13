@@ -11,8 +11,9 @@ from app.models import db, User, Call
 
 @app.route("/", methods = ["GET"])
 def test():
-    git_branch = subprocess.check_output(["git", "describe", "--always"]).strip().decode()
-    return json.dumps(f"Fudge SENG2021 project. Branch: {git_branch}")
+    # git_branch = subprocess.check_output(["git", "describe", "--always"]).strip().decode()
+    # return json.dumps(f"Fudge SENG2021 project. Branch: {git_branch}")
+    return json.dumps("working")
 
 @app.route("/sendInvoice", methods = ["POST"])
 def sendInvoiceEmail():
