@@ -115,16 +115,7 @@ def remove_session(token):
     -------
     {}
     """
-    
-    try:
-        data = jwt.decode(token, SECRET, algorithms=['HS256'])
-    except BaseException as all_errors:
-        raise AccessError(description= "Token is not valid") from all_errors
-    
-    session = Session.query.get(data['session_id'])
-    
-    if session == None:
-        raise InputError(description="Session does not exist")
+    session = load_token(token)
     
     db.session.delete(session)
     db.session.commit()
@@ -144,6 +135,22 @@ def check_token(token):
     None
     """
     
+    session = load_token(token)
+    
+    return session.userId
+
+def load_token(token):
+    """
+    Loads token. Throws error is token is invalid.
+
+    Parameters
+    ----------
+    token (String)
+
+    Returns
+    -------
+    session (Session)
+    """
     try:
         data = jwt.decode(token, SECRET, algorithms=['HS256'])
     except BaseException as all_errors:
@@ -153,8 +160,7 @@ def check_token(token):
     
     if session == None:
         raise InputError(description="Session does not exist")
-    
-    return session.userId
+    return session
 
 def hash(input):
     '''
