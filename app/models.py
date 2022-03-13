@@ -39,7 +39,7 @@ class User(db.Model):
     
     email = Column(String(320), nullable = False, unique = True)
     
-    username = Column(String(100), nullable = False, unique = True)
+    username = Column(Text, nullable = False, unique = True)
     
     password = Column(String(100), nullable = False)
     
