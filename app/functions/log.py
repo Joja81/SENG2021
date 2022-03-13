@@ -1,5 +1,6 @@
 
 
+import time
 from app.models import db, Call
 
 
@@ -14,7 +15,7 @@ def log_health_check():
     None
     """
     
-    new_call = Call(APICall = "health_check", userAuth = False)
+    new_call = Call(APICall = "health_check", userAuth = False, timeCalled = time.time())
     
     db.session.add(new_call)
     db.session.commit()
@@ -31,7 +32,7 @@ def log_send_invoice(user_id, email_adress):
     None
     """
     
-    new_call = Call(APICall = "send_invoice", userId = user_id,  userTo = email_adress, userAuth = True)
+    new_call = Call(APICall = "send_invoice", userId = user_id,  userTo = email_adress, userAuth = True, timeCalled = time.time())
     
     db.session.add(new_call)
     db.session.commit()
