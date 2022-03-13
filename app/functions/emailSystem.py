@@ -1,9 +1,9 @@
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 import re
-from app.error import InputError
+from app.functions.error import InputError
 import smtplib
-from app import ublExtractor
+from app.functions import ublExtractor
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
