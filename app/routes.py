@@ -18,5 +18,5 @@ def sendInvoiceEmail():
 @app.route("/HealthCheck", methods = ["GET"])
 def getHealthCheck():
     healthInfo = healthCheck.healthCheckInfo()
-    return dumps(healthInfo)
+    return json.dumps(healthInfo)
 
