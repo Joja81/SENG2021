@@ -1,6 +1,6 @@
 from crypt import methods
 import json
-from app import ublExtractor, healthCheck
+from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request
 from app.functions import email
 from app.functions.authentication import check_token, create_session, create_user, remove_session
