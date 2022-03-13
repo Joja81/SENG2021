@@ -44,7 +44,7 @@ def send_email(xml: str, timer_start: datetime):
         error_codes.append(1)
 
     # check size of xml
-    if (sys.getsizeof(xml) > 10000):
+    if (sys.getsizeof(xml) > 10485760):
         error_codes.append(2)
     
     if not validate_email(contacts["cust_email"]):
