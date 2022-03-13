@@ -15,6 +15,8 @@ def xmlNotFound():
         file = {'file': new_file}
         response = requests.post(f"{url}sendInvoice",  headers={
                                 'token': token}, files=file,)
+        assert json.loads(response)['sentMail'] == False
+        assert json.loads(response)['xmlFound'] == False
         print(response.text)
 
 
@@ -30,6 +32,8 @@ def xmlTooBig():
         file = {'./tests/files/10MB_Test': new_file}
         response = requests.post(f"{url}sendInvoice",  headers={
                                 'token': token}, files=file,)
+        assert json.loads(response)['sentMail'] == False
+        assert json.loads(response)['xmlRightSize'] == False
         print(response.text)
 
 
@@ -45,6 +49,8 @@ def invalidEmail():
         file = {'file': new_file}
         response = requests.post(f"{url}sendInvoice",  headers={
                                 'token': token}, files=file,)
+        assert json.loads(response)['sentMail'] == False
+        assert json.loads(response)['emailValid'] == False
         print(response.text)
 
 
@@ -60,6 +66,7 @@ def emailNotSent():
         file = {'file': new_file}
         response = requests.post(f"{url}sendInvoice",  headers={
                                 'token': token}, files=file,)
+        assert json.loads(response)['sentMail'] == False
         print(response.text)
 
 
