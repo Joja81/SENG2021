@@ -10,7 +10,8 @@ class Config:
     """Set Flask configuration from .env file."""
 
     # General Config
-    # SECRET_KEY = environ.get('SECRET_KEY') DEAL WITH THIS LATER
+    if 'SECRET_KEY' in environ:
+        SECRET_KEY = environ.get('SECRET_KEY')
 
     # Database setup for later
 
