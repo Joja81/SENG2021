@@ -6,8 +6,11 @@ from sqlalchemy import desc
 from app.functions.emailSystem import validate_email
 from app.functions.error import AccessError, InputError
 from app.models import Session, User, db
+import time
 
 import jwt
+
+SESSION_LENGTH = 60 # Number of minutes session should exist for
 
 SECRET = os.environ.get('SECRET')
 
@@ -89,7 +92,7 @@ def create_session(username, password):
     if user is None:
         raise InputError(description="Login details are invalid")
     
-    new_session = Session(user = user)
+    new_session = Session(user = user, time = time.time())
     
     db.session.add(new_session)
     db.session.commit()
