@@ -14,7 +14,7 @@ class Call(db.Model):
     userId = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="calls")
     
-    userTo = Column(String(320))
+    userTo = Column(Text)
     
     APICall = Column(String(100), nullable = False) #Not sure how to define the in
     
