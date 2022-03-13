@@ -1,4 +1,4 @@
-from __init__ import startTime
+from app import startTime
 from datetime import datetime
 
 def healthCheckInfo():
