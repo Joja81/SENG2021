@@ -1,4 +1,5 @@
 from os import getcwd, environ
+import os
 
 
 port = 5000
@@ -19,6 +20,13 @@ class Config:
 
     directory = getcwd()
     
-    SQLALCHEMY_DATABASE_URI = f"sqlite:////{directory}/log.db"
+    if "DATABASE_URL" in os.environ: # Gets uri for databse from eviro if on heroku, otherwise uses local sqlite
+        db_start = os.environ.get("DATABASE_URL")
+        split_db = db_start.split(":")
+        split_db[0] += "ql"
+        SQLALCHEMY_DATABASE_URI = ":".join(split_db)
+    else:
+        SQLALCHEMY_DATABASE_URI = f"sqlite:////{directory}/log.db"
+
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False

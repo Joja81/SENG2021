@@ -41,7 +41,7 @@ class User(db.Model):
     
     username = Column(String(100), nullable = False, unique = True)
     
-    password = Column(String(100), nullable = False)
+    password = Column(Text, nullable = False)
     
     calls = relationship("Call", order_by=Call.id, back_populates="user")
     

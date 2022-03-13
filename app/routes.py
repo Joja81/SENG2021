@@ -5,11 +5,15 @@ from flask import current_app as app, request
 from app.functions import emailSystem
 from app.functions.authentication import check_token, create_session, create_user, remove_session
 
+import subprocess
+
 from app.models import db, User, Call
 
 @app.route("/", methods = ["GET"])
 def test():
-    return json.dumps("Working")
+    # git_branch = subprocess.check_output(["git", "describe", "--always"]).strip().decode()
+    # return json.dumps(f"Fudge SENG2021 project. Branch: {git_branch}")
+    return json.dumps("working")
 
 @app.route("/sendInvoice", methods = ["POST"])
 def sendInvoiceEmail():
