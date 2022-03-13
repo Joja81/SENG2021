@@ -27,7 +27,7 @@ class Session(db.Model):
     
     id = Column(Integer, primary_key = True)
     
-    createdTime = Column(DateTime(timezone=True), server_default=func.now())
+    time = Column(Integer, nullable = False)
     
     userId = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="sessions")
