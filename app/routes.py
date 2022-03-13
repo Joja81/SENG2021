@@ -40,7 +40,7 @@ def endSession():
     data = request.get_json()
     
     return json.dumps(remove_session(data['token']))
-@app.route("/HealthCheck", methods = ["GET"])
+@app.route("/healthCheck", methods = ["GET"])
 def getHealthCheck():
     healthInfo = healthCheck.healthCheckInfo()
     return json.dumps(healthInfo)
