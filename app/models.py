@@ -18,7 +18,7 @@ class Call(db.Model):
     
     APICall = Column(String(100), nullable = False) #Not sure how to define the in
     
-    timeCalled = Column(DateTime(timezone=True), server_default=func.now(), nullable = False)
+    timeCalled = Column(Integer, nullable = False)
 
     userAuth = Column(Boolean, nullable = False)
 
