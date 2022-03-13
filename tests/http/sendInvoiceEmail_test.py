@@ -6,10 +6,11 @@ i = 0
 
 
 def test_invalid_auth():
-    file = {'file': open('./tests/files/AUInvoice.xml', 'rb')}
-    response = requests.post(
-        f"{url}sendInvoice", files=file, json={'token': "Hello"})
-    assert response.status_code == 403
+    with open('./tests/files/AUInvoice.xml', 'rb') as new_file:
+        file = {'file': new_file}
+        response = requests.post(
+            f"{url}sendInvoice", files=file, json={'token': "Hello"})
+        assert response.status_code == 403
 
 
 def test_basic():
@@ -18,11 +19,13 @@ def test_basic():
 
     print("token" + token)
 
-    file = {'file': open('./tests/files/AUInvoice.xml', 'rb')}
-    response = requests.post(f"{url}sendInvoice",  headers={
-                             'token': token}, files=file,)
-    print(response.text)
-    assert response.status_code == 200
+    with open('./tests/files/AUInvoice.xml', 'rb') as new_file:
+    
+        file = {'file': new_file}
+        response = requests.post(f"{url}sendInvoice",  headers={
+                                'token': token}, files=file,)
+        print(response.text)
+        assert response.status_code == 200
 
 
 def create_user():

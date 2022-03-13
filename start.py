@@ -7,7 +7,7 @@ import signal
 
 # Import environ if not on server where enviorment variables already saved
 if "ON_SERVER" not in os.environ:     
-    import enviro
+    import enviro # pylint: disable=import-error
 
 def graceful_exit(*args):
     emailSystem.exit()
