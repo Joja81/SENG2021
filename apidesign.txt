@@ -1,0 +1,225 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/J43163/fudge_api/1.0.0
+info:
+  description: This is a simple xml Emailing API
+  version: "1.0.0"
+  title: Fudge API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+paths:
+  /sendinvoice/email:
+    post:
+      summary: sends xml invoice to recipient
+      operationId: sendInvoiceEmail
+      description: |
+        Sends UBL invoice via email to specified addresses. 
+        Returns a human readable communication report informing user 
+        of success/errors: if unsuccessful, the report has errors 
+        (eg. email address invalid, connection not etablished etc.). 
+        It also includes address, client, time/date.
+      parameters:
+        - in: header
+          name: deliveryAddresses
+          description: Email adresses of recipients.
+          required: true
+          schema:
+            $ref: '#/components/schemas/deliveryAddresses'
+      requestBody:
+        description: The XML file to be sent.
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+              
+      responses:
+        '200':
+          description: Email sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/communicationReport'
+        '400':
+          description: Bad Request. Will occur when data inputed is incorrect. Returns a communication report with an error message informing user of the issue. Errors include invalid email, no xml invoice.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/communicationReport_2'
+        '413':
+          description: Attached XML invoice too large.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/communicationReport_3'
+                
+  /getHealthCheck:
+    get:
+      summary: Indication of aliveness
+      operationId: getHealthCheck
+      description: |
+        Health check endpoint that indicates the aliveness of this service.
+        Gives information about success, server up time, number of 
+        transactions and current version
+      responses:
+        '200':
+          description: Service is alive.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/healthReport'
+      
+components:
+  schemas:
+    deliveryAddresses:
+      type: object
+      required:
+        - recipients
+      properties:
+        recipients:
+          $ref: '#/components/schemas/recipients'
+
+    recipients:
+      type: array
+      items: 
+        $ref: '#/components/schemas/recipient'
+   
+    recipient:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: John Smith
+        email:
+          type: string
+          example: johnsmith@email.com.au
+
+    communicationReport:
+      type: object
+      required:
+        - xmlFound
+        - xmlRightSize
+        - emailValid
+        - connectedToMail
+        - sentMail
+        - timeTaken
+      properties:
+        xmlFound:
+          type: boolean
+          example: true 
+        xmlRightSize:
+          type: boolean
+          example: true
+        emailValid:
+          type: boolean
+          example: True
+        connectedToMail:
+          type: boolean
+          example: True
+        sentMail:
+          type: boolean
+          example: True
+        timeTaken:
+          type: integer
+          example: 12
+          
+    communicationReport_2:
+      type: object
+      required:
+        - xmlFound
+        - xmlRightSize
+        - emailValid
+        - connectedToMail
+        - sentMail
+        - timeTaken
+        - errorMessage
+      properties:
+        xmlFound:
+          type: boolean
+          example: true 
+        xmlRightSize:
+          type: boolean
+          example: true
+        emailValid:
+          type: boolean
+          example: false
+        connectedToMail:
+          type: boolean
+          example: false
+        sentMail:
+          type: boolean
+          example: false
+        timeTaken:
+          type: integer
+          example: 5
+        errorMessage:
+          type: string
+          example: "Email is not valid"
+          
+    communicationReport_3:
+      type: object
+      required:
+        - xmlFound
+        - xmlRightSize
+        - emailValid
+        - connectedToMail
+        - sentMail
+        - timeTaken
+        - errorMessage
+      properties:
+        xmlFound:
+          type: boolean
+          example: true 
+        xmlRightSize:
+          type: boolean
+          example: false
+        emailValid:
+          type: boolean
+          example: true
+        connectedToMail:
+          type: boolean
+          example: false
+        sentMail:
+          type: boolean
+          example: false
+        timeTaken:
+          type: integer
+          example: 5
+        errorMessage:
+          type: string
+          example: "File is too big. Must be less than 10MB"
+    
+    healthReport:
+      type: object
+      required:
+        - alive
+        - serverUpTime
+        - numTransactions
+        - currentVersion
+      properties:
+        alive:
+          type: boolean
+          example: true
+        serverUpTime:
+          type: integer
+          example: 12345
+        numTransactions:
+          type: integer
+          example: 123
+        numSuccess:
+          type: integer
+          example: 100
+        currentVersion:
+          type: string
+          example: 1.0.0
+    Invoice :
+      type: object

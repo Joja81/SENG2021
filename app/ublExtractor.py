@@ -17,7 +17,8 @@ def customerContact(xml):
 
     Returns
     -------
-    ``{'name' : '<Customer Name>', 'email': '<Customer@email>'}``
+    ``{'custS_name' : '<Customer Name>', 'cust_email': '<Customer@email>' 
+        'Bill_name : '<Biller Name>, 'Bill_email': '<Biller@email>'}``
         Customer Email contained in the UBL
     """
     
@@ -27,7 +28,13 @@ def customerContact(xml):
     customer = cusParty.find('cac:Party',NAMESPACE)                         #enters the customer party info
     continfo = customer.find('cac:Contact',NAMESPACE)                       #finds the child element cac:Contact
 
-    contact = {"name": continfo.find('cbc:Name',NAMESPACE).text,            #puts the info from cac:Contact into a dict
-    "email": continfo.find('cbc:ElectronicMail',NAMESPACE).text}
+    supplier = invoice.find('cac:AccountingSupplierParty', NAMESPACE)
+    seller = supplier.find('cac:Party',NAMESPACE)
+    contseller = seller.find('cac:Contact',NAMESPACE)    
+
+    contact = {"cust_name": continfo.find('cbc:Name',NAMESPACE).text,            #puts the info from cac:Contact into a dict
+    "cust_email": continfo.find('cbc:ElectronicMail',NAMESPACE).text,
+    "bill_name": contseller.find('cbc:Name',NAMESPACE).text, 
+    "bill_email": contseller.find('cbc:ElectronicMail',NAMESPACE).text}
 
     return contact
