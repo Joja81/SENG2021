@@ -3,7 +3,7 @@ import os
 from pydoc import describe
 
 from sqlalchemy import desc
-from app.functions.email import validate_email
+from app.functions.emailSystem import validate_email
 from app.functions.error import AccessError, InputError
 from app.models import Session, User, db
 

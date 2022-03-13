@@ -1,6 +1,4 @@
 import json
-from urllib import response
-import pytest
 import requests
 from config import url
 

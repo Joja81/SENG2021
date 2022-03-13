@@ -2,7 +2,7 @@ from crypt import methods
 import json
 from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request
-from app.functions import email
+from app.functions import emailSystem
 from app.functions.authentication import check_token, create_session, create_user, remove_session
 
 from app.models import db, User, Call
@@ -20,7 +20,7 @@ def sendInvoiceEmail():
     XML = request.files.get('file')
     xml = XML.read()
     
-    email.send_email(xml)
+    emailSystem.send_email(xml)
     return json.dumps("Communication report") #waiting for communication report implementation
 
 @app.route("/createNewUser", methods = ["POST"])
