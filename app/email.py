@@ -1,8 +1,9 @@
+from asyncio.windows_events import NULL
 from datetime import datetime
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 import re
-from SENG2021.app.commReport import communication_report
+from app.commReport import communication_report
 from app.error import InputError
 import smtplib
 from app import ublExtractor
@@ -18,7 +19,7 @@ mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
 def validate_email(email, timer_start):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
     if not (re.fullmatch(email_regex,email)):
-        raise InputError(description=communication_report([1], timer_start))
+        raise InputError(description=communication_report([3], timer_start))
 
 def send_email(xml: str, timer_start: datetime):
     """
@@ -35,6 +36,10 @@ def send_email(xml: str, timer_start: datetime):
     """
     
     contacts = ublExtractor.customerContact(xml)
+
+    # check xml exists
+    if (xml == NULL or xml == ''):
+        raise InputError(description=communication_report([1], timer_start))
 
     # check size of xml
     if (sys.getsizeof(xml) > 10000):
