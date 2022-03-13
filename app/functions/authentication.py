@@ -141,7 +141,7 @@ def check_token(token):
 
     Returns
     -------
-    None
+    user_id
     """
     
     try:
