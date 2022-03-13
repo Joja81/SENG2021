@@ -1,4 +1,4 @@
-from __init__ import startTime
+from app import startTime
 from datetime import datetime
 
 def healthCheckInfo():
@@ -19,4 +19,5 @@ def healthCheckInfo():
 
     upTime = datetime.now() - startTime
     alive = True
+    
     return {'alive': alive, 'serverUpTime': upTime}
