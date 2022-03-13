@@ -1,3 +1,5 @@
 venv
 *.db
 enviro.py
+__pycache__
+*.pyc

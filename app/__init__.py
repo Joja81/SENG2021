@@ -14,8 +14,6 @@ def init_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object('config.Config')
     app.register_error_handler(Exception, defaultHandler)
-    
-    startTime = datetime.now() # time the server was started
 
     CORS(app)
 
