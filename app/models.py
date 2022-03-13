@@ -16,9 +16,9 @@ class Call(db.Model):
     
     userTo = Column(String(320))
     
-    APICall = Column(String(100)) #Not sure how to define the in
+    APICall = Column(String(100), nullable = False) #Not sure how to define the in
     
-    timeCalled = Column(DateTime(timezone=True), server_default=func.now())
+    timeCalled = Column(DateTime(timezone=True), server_default=func.now(), nullable = False)
 
     userAuth = Column(Boolean, nullable = False)
 
@@ -27,7 +27,7 @@ class Session(db.Model):
     
     id = Column(Integer, primary_key = True)
     
-    createdTime = Column(DateTime(timezone=True), server_default=func.now())
+    time = Column(Integer, nullable = False)
     
     userId = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="sessions")
@@ -41,7 +41,7 @@ class User(db.Model):
     
     username = Column(String(100), nullable = False, unique = True)
     
-    password = Column(String(100), nullable = False)
+    password = Column(Text, nullable = False)
     
     calls = relationship("Call", order_by=Call.id, back_populates="user")
     

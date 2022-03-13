@@ -4,13 +4,25 @@ import json
 from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request
 from app.functions import emailSystem
-from app.functions.authentication import check_token, create_session, create_user, remove_session
+from app.functions.authentication import SESSION_LENGTH, check_token, create_session, create_user, remove_session
+from app.functions.log import log_health_check
+import time
 
-from app.models import db, User, Call
+from app.models import Session, db, User, Call
+
+
+
+@app.before_request
+def delete_old_sessions():
+    sessions = Session.query.filter(Session.time < time.time() - SESSION_LENGTH*60).all()
+    
+    for curr in sessions:
+        db.session.delete(curr)
+    db.session.commit()
 
 @app.route("/", methods = ["GET"])
 def test():
-    return json.dumps("Working")
+    return json.dumps("working")
 
 @app.route("/sendInvoice", methods = ["POST"])
 def sendInvoiceEmail():
@@ -43,5 +55,5 @@ def endSession():
 @app.route("/healthCheck", methods = ["GET"])
 def getHealthCheck():
     healthInfo = healthCheck.healthCheckInfo()
+    log_health_check()
     return json.dumps(healthInfo)
-
