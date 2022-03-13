@@ -10,7 +10,9 @@ error_messages = {
     5: 'Server rejected all recipients (mail not sent). '
     }
 
-"""
+
+def communication_report(error_codes: list, time_sent: datetime):
+    """
     Returns a communication report in JSON form, with status, time sent
     and errors in readable format.
 
@@ -26,7 +28,6 @@ error_messages = {
         JSON communication report.
 
     """
-def communication_report(error_codes: list, time_sent: datetime):
     report_dict = {
         "sentMail": error_codes == [],  
         "readable_errors": '',
