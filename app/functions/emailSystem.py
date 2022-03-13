@@ -4,7 +4,7 @@ from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 from pickle import TRUE
 import re
-from app.commReport import communication_report
+from app.functions.commReport import communication_report
 from app.functions.error import InputError
 import smtplib
 from app.functions import ublExtractor
@@ -35,23 +35,23 @@ def send_email(xml: str, timer_start: datetime):
     Returns
     -------
     """
-    errors = []
+    error_codes = []
     
     contacts = ublExtractor.customerContact(xml)
 
     # check xml exists
     if (xml == NULL or xml == ''):
-        errors.append(1)
+        error_codes.append(1)
 
     # check size of xml
     if (sys.getsizeof(xml) > 10000):
-        errors.append(2)
+        error_codes.append(2)
     
     if not validate_email(contacts["cust_email"]):
-        errors.append(3)
+        error_codes.append(3)
 
-    if errors != []:
-        raise InputError(description=communication_report(errors, timer_start))
+    if error_codes:
+        raise InputError(description=communication_report(error_codes, timer_start))
 
     #create email
     msg = MIMEMultipart()
@@ -78,10 +78,10 @@ def send_email(xml: str, timer_start: datetime):
     try:
         mail.sendmail(msg['From'], msg['To'], msg.as_string())
     except smtplib.SMTPHeloError:
-        errors.append(4)
+        error_codes.append(4)
     except smtplib.SMTPRecipientsRefused:
-        errors.append(5)
-    return communication_report(errors, timer_start)
+        error_codes.append(5)
+    return communication_report(error_codes, timer_start)
 
 def exit():
     mail.quit()
