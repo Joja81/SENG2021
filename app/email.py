@@ -13,14 +13,14 @@ from email.mime.text import MIMEText
 import os
 import sys
 
+
 mail = smtplib.SMTP(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'))
 mail.starttls()
 mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
 
-def validate_email(email, timer_start, connected):
+def validate_email(email):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
-    if not (re.fullmatch(email_regex,email)):
-        raise InputError(description=communication_report([3], timer_start, connected))
+    return (re.fullmatch(email_regex,email))
 
 def send_email(xml: str, timer_start: datetime):
     """
@@ -35,20 +35,23 @@ def send_email(xml: str, timer_start: datetime):
     Returns
     -------
     """
-    # HELP LOL NOT SURE RIGHT NOW HOW THE CONNECTION FOR THE EMAIL WORKS??????????
-    connected = TRUE
+    errors = []
     
     contacts = ublExtractor.customerContact(xml)
 
     # check xml exists
     if (xml == NULL or xml == ''):
-        raise InputError(description=communication_report([1], timer_start, connected))
+        errors.append(1)
 
     # check size of xml
     if (sys.getsizeof(xml) > 10000):
-        raise InputError(description=communication_report([2], timer_start, connected))
+        errors.append(2)
     
-    validate_email(contacts["cust_email"])
+    if not validate_email(contacts["cust_email"]):
+        errors.append(3)
+
+    if errors != []:
+        raise InputError(description=communication_report(errors, timer_start))
 
     #create email
     msg = MIMEMultipart()
@@ -72,7 +75,13 @@ def send_email(xml: str, timer_start: datetime):
     body = MIMEText(message,'HTML')
     msg.attach(body)
     msg.attach(MIMEApplication(xml, Name='invoice.xml'))
-    mail.sendmail(msg['From'], msg['To'], msg.as_string())
+    try:
+        mail.sendmail(msg['From'], msg['To'], msg.as_string())
+    except smtplib.SMTPHeloError:
+        errors.append(4)
+    except smtplib.SMTPRecipientsRefused:
+        errors.append(5)
+    return communication_report(errors, timer_start)
 
 def exit():
     mail.quit()
