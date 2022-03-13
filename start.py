@@ -4,7 +4,7 @@ from app import init_app, email
 from flask import Flask
 import signal
 
-if 'ON_HEROKU' not in os.environ: # Checks if running on 
+if 'ON_SERVER' not in os.environ: # Checks if running on 
     import enviro
 
 def graceful_exit(*args):
