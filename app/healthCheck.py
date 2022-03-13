@@ -19,4 +19,5 @@ def healthCheckInfo():
 
     upTime = datetime.now() - startTime
     alive = True
+    
     return {'alive': alive, 'serverUpTime': upTime}
