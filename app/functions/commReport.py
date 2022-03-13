@@ -21,8 +21,6 @@ def communication_report(error_codes: list, time_sent: datetime):
             A list of error codes (int).
         time_sent : datetime
             Datetime of time email was sent.
-        connected : bool
-            If server is connected.
 
     Returns
         JSON communication report.
