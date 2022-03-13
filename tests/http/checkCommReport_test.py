@@ -73,12 +73,12 @@ def emailNotSent():
 def create_user():
     requests.post(url + "createNewUser",
                   json={
-                      "email": f"email{i+100}@email.com",
-                      "username": f"Username{i+100}",
+                      "email": f"tayleung@email.com",
+                      "username": f"tayleung",
                       "password": "password"})
 
     resp = requests.post(
-        url + "newSession", json={'username': "Username4", 'password': "password"})
+        url + "newSession", json={'username': "tayleung", 'password': "password"})
 
     assert resp.status_code == 200
 
