@@ -1,3 +1,4 @@
+from datetime import datetime
 from crypt import methods
 import json
 from app.functions import ublExtractor, healthCheck
@@ -30,10 +31,9 @@ def sendInvoiceEmail():
     check_token(token)
     
     XML = request.files.get('file')
-    xml = XML.read()
-    
-    emailSystem.send_email(xml)
-    return json.dumps("Communication report") #waiting for communication report implementation
+    xml = XML.read() 
+    commReport = emailSystem.send_email(xml, datetime.now())
+    return commReport
 
 @app.route("/createNewUser", methods = ["POST"])
 def createNewUser():
