@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 from datetime import datetime
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
@@ -33,6 +32,7 @@ def send_email(xml: str, timer_start: datetime):
         an `XML` formatted with ``PEPPOL BIS Billing 3.0 standard``
 
     Returns
+    Comm report, email_adress_sent
     -------
     """
     error_codes = []
@@ -40,7 +40,7 @@ def send_email(xml: str, timer_start: datetime):
     contacts = ublExtractor.customerContact(xml)
 
     # check xml exists
-    if (xml == NULL or xml == ''):
+    if (xml == None or xml == ''):
         error_codes.append(1)
 
     # check size of xml
@@ -81,8 +81,7 @@ def send_email(xml: str, timer_start: datetime):
         error_codes.append(4)
     except smtplib.SMTPRecipientsRefused:
         error_codes.append(5)
-    return communication_report(error_codes, timer_start)
+    return communication_report(error_codes, timer_start), contacts["cust_email"]
 
 def exit():
     mail.quit()
-    

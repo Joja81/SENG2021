@@ -39,7 +39,8 @@ def create_user(request):
     """
 
     # Check for valid email
-    validate_email(request['email'])
+    if not validate_email(request['email']):
+        raise InputError("Email is not valid")
     
     # Check valid username
     if len(request['username']) > 100 or len(request['username']) < 5:
