@@ -1,6 +1,8 @@
 import requests
 from config import url
+from tests.http.fixtures import test_app
 
 def test_healthInfo():
-    response = requests.get(f"{url}/healthCheck")
-    assert response.status_code == 200
+    with test_app.test_client() as app:
+        response = app.get("/healthCheck")
+        assert response.status_code == 200
