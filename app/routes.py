@@ -14,8 +14,8 @@ def test():
 def sendInvoiceEmail():
     XML = request.files.get('file')
     xml = XML.read() 
-    email.send_email(xml, datetime.now())
-    return json.dumps("Communication report") #waiting for communication report implementation
+    commReport = email.send_email(xml, datetime.now())
+    return json.dumps(commReport)
 
 @app.route("/HealthCheck", methods = ["GET"])
 def getHealthCheck():
