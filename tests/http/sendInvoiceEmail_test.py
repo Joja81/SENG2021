@@ -10,9 +10,10 @@ i = 0
 
 def test_invalid_auth():
     with test_app.test_client() as app:
-        response = app.post("/sendInvoice",  headers={
+        with open('./tests/files/AUInvoice.xml', 'rb') as file:
+            response = app.post("/sendInvoice",  headers={
                                     'token': "Hello"}, data = {
-                                        "file" : (open('./tests/files/AUInvoice.xml', 'rb'), "invoice.xml")
+                                        "file" : (file, "invoice.xml")
                                         })
         assert response.status_code == 403
 
@@ -22,10 +23,11 @@ def test_basic():
         token = create_user()
 
         print("token" + token)
-        response = app.post("/sendInvoice",  headers={
-                                    'token': token}, data = {
-                                        "file" : (open('./tests/files/AUInvoice.xml', 'rb'), "invoice.xml")
-                                        })
+        with open('./tests/files/AUInvoice.xml', 'rb') as file:
+            response = app.post("/sendInvoice",  headers={
+                                'token': token}, data = {
+                                "file" : (file, "invoice.xml")
+                                })
             
         print(response.data)
         assert response.status_code == 200
