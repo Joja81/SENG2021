@@ -1,10 +1,11 @@
 from os import getcwd, environ
 import os
 
-
 port = 5000
 
 url = f"http://localhost:{port}/"
+
+
 
 class Config:
     """Set Flask configuration from .env file."""
@@ -14,6 +15,10 @@ class Config:
         SECRET_KEY = environ.get('SECRET_KEY')
 
     # Database setup for later
+    
+    # Import environ if not on server where enviorment variables already saved
+    if "ON_SERVER" not in os.environ:     
+        import enviro # pylint: disable=import-error
 
     directory = getcwd()
     

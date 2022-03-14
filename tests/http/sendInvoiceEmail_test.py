@@ -1,43 +1,50 @@
 import json
-import requests
+import os
+from io import BytesIO
+import werkzeug
 from config import url
-
+from tests.http.fixtures import test_app
+from werkzeug.datastructures import FileStorage, FileMultiDict
 i = 0
 
 
 def test_invalid_auth():
-    with open('./tests/files/AUInvoice.xml', 'rb') as new_file:
-        file = {'file': new_file}
-        response = requests.post(
-            f"{url}sendInvoice", files=file, json={'token': "Hello"})
+    with test_app.test_client() as app:
+        with open('./tests/files/AUInvoice.xml', 'rb') as file:
+            response = app.post("/sendInvoice",  headers={
+                                    'token': "Hello"}, data = {
+                                        "file" : (file, "invoice.xml")
+                                        })
         assert response.status_code == 403
 
 
 def test_basic():
+    with test_app.test_client() as app:
+        token = create_user()
 
-    token = create_user()
-
-    print("token" + token)
-
-    with open('./tests/files/AUInvoice.xml', 'rb') as new_file:
-    
-        file = {'file': new_file}
-        response = requests.post(f"{url}sendInvoice",  headers={
-                                'token': token}, files=file,)
-        print(response.text)
+        print("token" + token)
+        with open('./tests/files/AUInvoice.xml', 'rb') as file:
+            response = app.post("/sendInvoice",  headers={
+                                'token': token}, data = {
+                                "file" : (file, "invoice.xml")
+                                })
+            
+        print(response.data)
         assert response.status_code == 200
 
 
 def create_user():
-    requests.post(url + "createNewUser",
+    with test_app.test_client() as app:
+        app.post("/createNewUser",
                   json={
                       "email": f"email{i+100}@email.com",
                       "username": f"Username{i+100}",
                       "password": "password"})
 
-    resp = requests.post(
-        url + "newSession", json={'username': "Username4", 'password': "password"})
+        resp = app.post("/newSession", 
+                    json={'username': "Username4",
+                        'password': "password"})
 
     assert resp.status_code == 200
 
-    return json.loads(resp.text)['token']
+    return json.loads(resp.data)['token']
