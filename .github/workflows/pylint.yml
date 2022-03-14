@@ -9,6 +9,13 @@ jobs:
       matrix:
         python-version: ["3.8"]
     steps:
+      env:
+        ON_SERVER: ${{ secrets.ON_SERVER }}
+        SECRET: ${{ secrets.SECRET }}
+        SMTP_HOST: ${{ secrets.SMPT_HOST }}
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
