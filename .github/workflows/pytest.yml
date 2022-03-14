@@ -29,5 +29,4 @@ jobs:
         SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
       run: |
         echo $SECRET
-      run: |
-        pytest
+
