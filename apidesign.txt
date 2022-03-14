@@ -2,7 +2,8 @@ openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/J43163/fudge_api/1.0.0
+    url: https://virtserver.swaggerhub.com/EddlesA/G21_fudge_api/1.0.0
+    
 info:
   description: This is a simple xml Emailing API
   version: "1.0.0"
@@ -14,7 +15,7 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
-  /sendinvoice/email:
+  /sendinvoice:
     post:
       summary: sends xml invoice to recipient
       operationId: sendInvoiceEmail
@@ -25,12 +26,13 @@ paths:
         (eg. email address invalid, connection not etablished etc.). 
         It also includes address, client, time/date.
       parameters:
-        - in: header
-          name: deliveryAddresses
-          description: Email adresses of recipients.
-          required: true
+        - in: query
+          name: token
+          description: |
+            token given to the session by /newSession
+          required: True
           schema:
-            $ref: '#/components/schemas/deliveryAddresses'
+             $ref: '#/components/schemas/token'
       requestBody:
         description: The XML file to be sent.
         required: true
@@ -47,7 +49,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/communicationReport'
         '400':
-          description: Bad Request. Will occur when data inputed is incorrect. Returns a communication report with an error message informing user of the issue. Errors include invalid email, no xml invoice.
+          description: |
+            Bad Request. Will occur when data inputed is incorrect. 
+            Returns a communication report with an error message informing 
+            user of the issue. Errors include invalid email, no xml invoice.
           content:
             application/json:
               schema:
@@ -59,7 +64,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/communicationReport_3'
                 
-  /getHealthCheck:
+  /HealthCheck:
     get:
       summary: Indication of aliveness
       operationId: getHealthCheck
@@ -67,6 +72,14 @@ paths:
         Health check endpoint that indicates the aliveness of this service.
         Gives information about success, server up time, number of 
         transactions and current version
+      parameters:
+        - in: query
+          name: token
+          description: |
+            token given to the session by /newSession
+          required: True
+          schema:
+             $ref: '#/components/schemas/token'
       responses:
         '200':
           description: Service is alive.
@@ -74,16 +87,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/healthReport'
-      
+  /newSession:
+    get:
+      summary: Get a new token for a users session
+      operationId: newSession
+      description: |
+        Creates a new token for a given username and password. Allows user
+        to autheticate themselves within api calls.
+      responses:
+        '200':
+          description: Valid username and password.
+          content:
+            appilcation/json:
+              schema:
+                $ref: '#/components/schemas/token'
+        '400':
+          description: Invaild sign in credentials.
+  
+  /createNewUser:
+    post:
+      summary: register a new user for the API
+      operationId: createNewUser
+      description: |
+        Creates a new user accoung with a given email, name, username and 
+        password. The set username and passowrd will be used when calling 
+        /newsession. username and passowrd name muse be between 5-100 
+        (inclusive) characters long. Username must also be unique.
+      responses:
+        '200':
+          description: User account created
+        '400':
+          description: |
+            Invaild username, Invalid email, Invalid password, 
+            Username already in use, Email already in use, 
+            
+  /endSession:
+    post:
+      description: |
+        Revokes the token given to the endpoint (token issued by /newSession)
+        This should bt used by all users on their server's shutdown.
+        Sessions are automatically deleted after an hour (of inactivity)
+      parameters:
+        - in: query
+          name: token
+          description: |
+            token given to the session by /newSession
+          required: True
+          schema:
+             $ref: '#/components/schemas/token'
+      responses:
+        '200': 
+          description: Session revoked.
+        '403':
+          description: Session token invalid.
 components:
   schemas:
-    deliveryAddresses:
+    token:
       type: object
       required:
-        - recipients
+        - token
       properties:
-        recipients:
-          $ref: '#/components/schemas/recipients'
+        token:
+          type: string
+          example: Af13dfd2t42wwah
 
     recipients:
       type: array
@@ -215,9 +281,6 @@ components:
         numTransactions:
           type: integer
           example: 123
-        numSuccess:
-          type: integer
-          example: 100
         currentVersion:
           type: string
           example: 1.0.0
