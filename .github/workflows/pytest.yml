@@ -23,10 +23,9 @@ jobs:
       env:
         ON_SERVER: ${{ secrets.ON_SERVER }}
         SECRET: ${{ secrets.SECRET }}
-        SMTP_HOST: ${{ secrets.SMPT_HOST }}
+        SMTP_HOST: ${{ secrets.SMTP_HOST }}
         SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         SMTP_PORT: ${{ secrets.SMTP_PORT }}
         SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
       run: |
-        echo $SECRET
-
+        pytest
