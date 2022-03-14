@@ -1,6 +1,5 @@
 from os import getcwd, environ
 import os
-import enviro
 
 port = 5000
 
