@@ -1,10 +1,11 @@
+from datetime import datetime
 from crypt import methods
 import json
 from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request
 from app.functions import emailSystem
 from app.functions.authentication import SESSION_LENGTH, check_token, create_session, create_user, remove_session
-from app.functions.log import log_health_check
+from app.functions.log import log_health_check, log_send_invoice
 import time
 
 from app.models import Session, db, User, Call
@@ -27,13 +28,15 @@ def test():
 def sendInvoiceEmail():
     #Check authentication
     token = request.headers.get('token')
-    check_token(token)
+    user_id = check_token(token)
     
     XML = request.files.get('file')
-    xml = XML.read()
+    xml = XML.read() 
+    commReport, email_address = emailSystem.send_email(xml, datetime.now())
     
-    emailSystem.send_email(xml)
-    return json.dumps("Communication report") #waiting for communication report implementation
+    log_send_invoice(user_id, email_address)
+    
+    return commReport
 
 @app.route("/createNewUser", methods = ["POST"])
 def createNewUser():

@@ -1,12 +1,17 @@
+from datetime import datetime
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
+from pickle import TRUE
 import re
+from app.functions.commReport import communication_report
 from app.functions.error import InputError
 import smtplib
 from app.functions import ublExtractor
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
+import sys
+
 
 mail = smtplib.SMTP(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'))
 mail.starttls()
@@ -14,10 +19,9 @@ mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
 
 def validate_email(email):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
-    if not (re.fullmatch(email_regex,email)):
-        raise InputError(description='email is not of valid format')
+    return (re.fullmatch(email_regex,email))
 
-def send_email(xml):
+def send_email(xml: str, timer_start: datetime):
     """
     Sends UBL invoice to the first ``cac:AccountingCustomerParty`` entry 
     in said UBL.
@@ -28,12 +32,26 @@ def send_email(xml):
         an `XML` formatted with ``PEPPOL BIS Billing 3.0 standard``
 
     Returns
+    Comm report, email_adress_sent
     -------
     """
+    error_codes = []
     
     contacts = ublExtractor.customerContact(xml)
+
+    # check xml exists
+    if (xml == None or xml == ''):
+        error_codes.append(1)
+
+    # check size of xml
+    if (sys.getsizeof(xml) > 10485760):
+        error_codes.append(2)
     
-    validate_email(contacts["cust_email"])
+    if not validate_email(contacts["cust_email"]):
+        error_codes.append(3)
+
+    if error_codes:
+        raise InputError(description=communication_report(error_codes, timer_start))
 
     #create email
     msg = MIMEMultipart()
@@ -57,8 +75,13 @@ def send_email(xml):
     body = MIMEText(message,'HTML')
     msg.attach(body)
     msg.attach(MIMEApplication(xml, Name='invoice.xml'))
-    mail.sendmail(msg['From'], msg['To'], msg.as_string())
+    try:
+        mail.sendmail(msg['From'], msg['To'], msg.as_string())
+    except smtplib.SMTPHeloError:
+        error_codes.append(4)
+    except smtplib.SMTPRecipientsRefused:
+        error_codes.append(5)
+    return communication_report(error_codes, timer_start), contacts["cust_email"]
 
 def exit():
     mail.quit()
-    

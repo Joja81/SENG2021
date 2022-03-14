@@ -1,5 +1,8 @@
+import time
 from app import startTime
 from datetime import datetime
+
+from app.models import Call
 
 def healthCheckInfo():
     '''
@@ -16,9 +19,11 @@ def healthCheckInfo():
     Return Value:
         Returns {'alive': alive, 'serverUpTime': upTime}
     '''
-    startTimeUnix = datetime.timestamp(startTime)*1000
-    currTimeUnix = datetime.timestamp(datetime.now())*1000
+    startTimeUnix = datetime.timestamp(startTime)
+    currTimeUnix = datetime.timestamp(datetime.now())
     upTime = currTimeUnix - startTimeUnix
     alive = True
     
-    return {'alive': alive, 'serverUpTime': upTime}
+    call_num = Call.query.filter(Call.timeCalled > startTimeUnix).count()
+    
+    return {'alive': alive, 'serverUpTime': upTime, 'numTransactions' : call_num, 'currentVersion' : "Version 1 release"}
