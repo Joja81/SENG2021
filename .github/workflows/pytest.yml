@@ -19,7 +19,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    -shell: bash
+    - shell: pwsh
       env:
         ON_SERVER: ${{ secrets.ON_SERVER }}
         SECRET: ${{ secrets.SECRET }}
