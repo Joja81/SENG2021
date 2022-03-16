@@ -1,7 +1,6 @@
 from datetime import datetime
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
-from pickle import TRUE
 import re
 from app.functions.commReport import communication_report
 from app.functions.error import InputError
@@ -12,10 +11,10 @@ from email.mime.text import MIMEText
 import os
 import sys
 
-
 mail = smtplib.SMTP(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'))
-mail.starttls()
-mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
+def SMTP_connect():
+    mail.starttls()
+    mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
 
 def validate_email(email):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
@@ -75,13 +74,29 @@ def send_email(xml: str, timer_start: datetime):
     body = MIMEText(message,'HTML')
     msg.attach(body)
     msg.attach(MIMEApplication(xml, Name='invoice.xml'))
+    
+    return send_mail(contacts, msg, error_codes, timer_start, False)
+
+
+def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
     try:
         mail.sendmail(msg['From'], msg['To'], msg.as_string())
+        
+    except smtplib.SMTPSenderRefused:
+        if not recall:
+            SMTP_connect()
+            send_mail(contacts, msg, error_codes, timer_start, True)
+
     except smtplib.SMTPHeloError:
         error_codes.append(4)
     except smtplib.SMTPRecipientsRefused:
         error_codes.append(5)
+    
     return communication_report(error_codes, timer_start), contacts["cust_email"]
 
 def exit():
     mail.quit()
+
+
+
+SMTP_connect()
