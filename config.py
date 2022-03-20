@@ -19,8 +19,6 @@ class Config:
     # Import environ if not on server where enviorment variables already saved
     if "ON_SERVER" not in os.environ:     
         import enviro # pylint: disable=import-error
-
-    directory = getcwd()
     
     if "DATABASE_URL" in os.environ: # Gets uri for databse from eviro if on heroku, otherwise uses local sqlite
         db_start = os.environ.get("DATABASE_URL")
@@ -28,6 +26,16 @@ class Config:
         split_db[0] += "ql"
         SQLALCHEMY_DATABASE_URI = ":".join(split_db)
     else:
+        
+        # Remove local db if currenlty exists
+        directory = getcwd() 
+        db_path = directory + "\\app\log.db"
+        print(db_path)
+        if os.path.exists(db_path):
+            print("removing")
+            os.remove(db_path)
+        
+        
         SQLALCHEMY_DATABASE_URI = f"sqlite:///log.db"
 
     SQLALCHEMY_ECHO = False
