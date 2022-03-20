@@ -28,7 +28,7 @@ class Config:
         split_db[0] += "ql"
         SQLALCHEMY_DATABASE_URI = ":".join(split_db)
     else:
-        SQLALCHEMY_DATABASE_URI = f"sqlite:////{directory}/log.db"
+        SQLALCHEMY_DATABASE_URI = f"sqlite:///log.db"
 
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False

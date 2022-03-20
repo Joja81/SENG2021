@@ -1,5 +1,4 @@
 from datetime import datetime
-from crypt import methods
 import json
 from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request

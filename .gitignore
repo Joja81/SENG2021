@@ -1,4 +1,5 @@
 venv
+env
 *.db
 enviro.py
 __pycache__
