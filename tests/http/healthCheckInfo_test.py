@@ -1,8 +1,12 @@
-import requests
+import json
 from config import url
 from tests.http.fixtures import test_app
 
 def test_healthInfo():
     with test_app.test_client() as app:
         response = app.get("/healthCheck")
-        assert response.status_code == 200
+        data = json.loads(response)
+
+        assert data['alive']
+        assert data['serverUpTime'] > 0
+        assert data['numTransactions'] >= 0
