@@ -1,25 +1,22 @@
 import json
-import requests
 from config import url
 import pytest
 from tests.http.fixtures import test_app
 
-@pytest.mark.skip(reason="post req needs to be changed")
 def test_xmlNotFound():
 
-    token = create_user()
-
-    print("token" + token)
-    print("xml not found test")
-
-    with open('', 'rb') as new_file:
+    with test_app.test_client() as app:
     
-        file = {'file': new_file}
-        response = requests.post(f"{url}sendInvoice",  headers={
-                                'token': token}, files=file,)
-        assert json.loads(response)['sentMail'] == False
-        assert json.loads(response)['xmlFound'] == False
-        print(response.text)
+        token = create_user()
+
+        print("token" + token)
+        print("xml not found test")
+        
+        response = app.post("sendInvoice",  headers={
+                                'token': token},)
+        assert json.loads(response.data)['sentMail'] == False
+        assert json.loads(response.data)['xmlFound'] == False
+        print(response.data)
 
 @pytest.mark.skip(reason="post req needs to be changed")
 def test_xmlTooBig():

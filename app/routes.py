@@ -4,6 +4,7 @@ from app.functions import ublExtractor, healthCheck
 from flask import current_app as app, request
 from app.functions import emailSystem
 from app.functions.authentication import SESSION_LENGTH, check_token, create_session, create_user, remove_session
+from app.functions.commReport import communication_report
 from app.functions.log import log_health_check, log_send_invoice
 import time
 
@@ -28,12 +29,15 @@ def sendInvoiceEmail():
     #Check authentication
     token = request.headers.get('token')
     user_id = check_token(token)
-    
     XML = request.files.get('file')
-    xml = XML.read() 
-    commReport, email_address = emailSystem.send_email(xml, datetime.now())
+    print("XML OUTPUT")
+    if XML == None:
+        commReport = communication_report([1], datetime.now())
+    else:
+        xml = XML.read()
+        commReport, email_address = emailSystem.send_email(xml, datetime.now())
     
-    log_send_invoice(user_id, email_address)
+        log_send_invoice(user_id, email_address)
     
     return commReport
 
