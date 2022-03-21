@@ -31,7 +31,6 @@ class Config:
         directory = getcwd() 
         db_path = directory + "\\app\log.db"
         if os.path.exists(db_path):
-            print("removing")
             os.remove(db_path)
         
         

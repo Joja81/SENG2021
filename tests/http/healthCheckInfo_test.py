@@ -4,8 +4,8 @@ from tests.http.fixtures import test_app
 
 def test_healthInfo():
     with test_app.test_client() as app:
-        response = app.get("/healthCheck")
-        data = json.loads(response)
+        resp = app.get("/healthCheck")
+        data = json.loads(resp.data)
 
         assert data['alive']
         assert data['serverUpTime'] > 0
