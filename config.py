@@ -30,7 +30,6 @@ class Config:
         # Remove local db if currenlty exists
         directory = getcwd() 
         db_path = directory + "\\app\log.db"
-        print(db_path)
         if os.path.exists(db_path):
             print("removing")
             os.remove(db_path)
