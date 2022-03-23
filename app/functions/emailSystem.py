@@ -77,6 +77,59 @@ def send_email(xml: str, timer_start: datetime):
     
     return send_mail(contacts, msg, error_codes, timer_start, False)
 
+def send_to_email(xml: str, email: str, timer_start: datetime):
+    """
+    Sends UBL invoice to the specified email.
+
+    Parameters
+    ----------
+    xml : string
+        an `XML` formatted with ``PEPPOL BIS Billing 3.0 standard``
+    email: string
+        an email address
+
+    Returns
+    Comm report, email_adress_sent
+    -------
+    """
+    error_codes = []
+    # new extractor for biller could be written, this will work for now.
+    contacts = {'cust_email': email, 'bill_name': 'FUDGE'}
+
+    # check xml exists
+    if (xml == None or xml == ''):
+        error_codes.append(1)
+
+    # check size of xml
+    if (sys.getsizeof(xml) > 10485760):
+        error_codes.append(2)
+    
+    if not validate_email(contacts["cust_email"]):
+        error_codes.append(3)
+
+    if error_codes:
+        raise InputError(description=communication_report(error_codes, timer_start))
+
+    #create email
+    msg = MIMEMultipart()
+    msg['Subject'] = (f'Invoice from {contacts["bill_name"]}')
+    msg['To'] = (f'{contacts["cust_email"]}')
+    message = f"""
+        <html>
+            <head></head>
+            <body>
+                <p>Hello,<br>
+                    Attached is your invoice.<br>
+                    Kind regards,<br>
+                    {contacts["bill_name"]}. <br>
+                </p>
+            </body>
+        </html>
+    """
+
+    body = MIMEText(message,'HTML')
+    msg.attach(body)
+    msg.attach(MIMEApplication(xml, Name='invoice.xml'))
 
 def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
     try:

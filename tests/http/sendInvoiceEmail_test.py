@@ -32,7 +32,16 @@ def test_basic():
         print(response.data)
         assert response.status_code == 200
 
+def test_email():
+    with test_app.test_client() as app:
+        token = create_user()
 
+        print("token" + token)
+        with open('./tests/files/AUInvoice.xml', 'rb') as file:
+            response = app.post("/emailInvoice",  headers={
+                                'token': token, 'email': 'edambro02+testing@gmail.com'}, data = {
+                                "file" : (file, "invoice.xml")
+                                })
 def create_user():
     with test_app.test_client() as app:
         app.post("/createNewUser",

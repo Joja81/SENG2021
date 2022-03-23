@@ -38,6 +38,20 @@ def sendInvoiceEmail():
     
     return commReport
 
+@app.route("/emailInvoice", methods = ["POST"])
+def emailInvoice():
+    token = request.headers.get('token')
+    email = request.headers.get('email')
+    user_id = check_token(token)
+    
+    XML = request.files.get('file')
+    xml = XML.read() 
+    commReport, email_address = emailSystem.send_to_email(xml, email, datetime.now())
+    
+    log_send_invoice(user_id, email_address)
+    
+    return commReport
+
 @app.route("/createNewUser", methods = ["POST"])
 def createNewUser():
     data = request.get_json()
