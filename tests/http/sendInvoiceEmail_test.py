@@ -42,6 +42,10 @@ def test_email():
                                 'token': token, 'email': 'edambro02+testing@gmail.com'}, data = {
                                 "file" : (file, "invoice.xml")
                                 })
+        
+        print(response.data)
+        assert response.status_code == 200
+        
 def create_user():
     with test_app.test_client() as app:
         app.post("/createNewUser",
