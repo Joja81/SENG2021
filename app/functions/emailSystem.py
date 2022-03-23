@@ -113,6 +113,7 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
     #create email
     msg = MIMEMultipart()
     msg['Subject'] = (f'Invoice from {contacts["bill_name"]}')
+    msg['from'] = (f'se2y22g21@gmail.com')
     msg['To'] = (f'{contacts["cust_email"]}')
     message = f"""
         <html>
@@ -130,6 +131,8 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
     body = MIMEText(message,'HTML')
     msg.attach(body)
     msg.attach(MIMEApplication(xml, Name='invoice.xml'))
+
+    return send_mail(contacts, msg, error_codes, timer_start, False)
 
 def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
     try:
