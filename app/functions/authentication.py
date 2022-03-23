@@ -97,9 +97,9 @@ def create_session(username, password):
     
     db.session.add(new_session)
     db.session.commit()
-    
+
     token = jwt.encode({'username' : user.username, 'session_id' : new_session.id}, SECRET,  algorithm='HS256')
-    
+
     return {'token' : token}
 
 def remove_session(token):
