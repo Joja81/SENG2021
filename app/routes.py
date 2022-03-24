@@ -5,7 +5,7 @@ from flask import current_app as app, request
 from app.functions import emailSystem
 from app.functions.authentication import SESSION_LENGTH, check_token, create_session, create_user, remove_session
 from app.functions.commReport import communication_report
-from app.functions.log import log_health_check, log_send_invoice
+from app.functions.log import log_authentication, log_health_check, log_send_invoice
 import time
 
 from app.models import Session, db, User, Call
@@ -58,18 +58,33 @@ def emailInvoice():
 @app.route("/createNewUser", methods = ["POST"])
 def createNewUser():
     data = request.get_json()
-    return json.dumps(create_user(data))
+
+    response, user_id = create_user(data)
+
+    log_authentication(user_id, call_type="createNewUser")
+
+    return json.dumps(response)
 
 @app.route("/newSession", methods = ["POST"])
 def newSession():
     
     data = request.get_json()
+
+    response, user_id = create_session(data['username'], data['password'])
+
+    log_authentication(user_id, call_type="newSession")
     
-    return json.dumps(create_session(data['username'], data['password']))
+    return json.dumps(response)
 
 @app.route("/endSession", methods = ['POST'])
 def endSession():
     data = request.get_json()
+    
+    response, user_id = remove_session(data['token'])
+
+    log_authentication(user_id, call_type="endSession")
+
+    return json.dumps(response)
     
     return json.dumps(remove_session(data['token']))
 @app.route("/healthCheck", methods = ["GET"])
