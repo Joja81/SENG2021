@@ -72,7 +72,7 @@ def newSession():
 def endSession():
     data = request.get_json()
     retval = authentication.remove_session(data['token'])
-    return json.dumps()
+    return json.dumps(retval)
 
 @app.route("/health/check/v1", methods = ["GET"])
 @app.route("/healthCheck", methods = ["GET"])                   #deprecated route
