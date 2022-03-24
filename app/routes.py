@@ -86,7 +86,6 @@ def endSession():
 
     return json.dumps(response)
     
-    return json.dumps(remove_session(data['token']))
 @app.route("/healthCheck", methods = ["GET"])
 def getHealthCheck():
     healthInfo = healthCheck.healthCheckInfo()
