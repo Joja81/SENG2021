@@ -1,20 +1,15 @@
 from datetime import datetime
 import json
-from app.functions import ublExtractor, healthCheck
+from app.functions import healthCheck, emailSystem, authentication, commReport, log
 from flask import current_app as app, request
-from app.functions import emailSystem
-from app.functions.authentication import SESSION_LENGTH, check_token, create_session, create_user, remove_session
-from app.functions.commReport import communication_report
-from app.functions.log import log_health_check, log_send_invoice
 import time
-
 from app.models import Session, db, User, Call
 
 
 
 @app.before_request
 def delete_old_sessions():
-    sessions = Session.query.filter(Session.time < time.time() - SESSION_LENGTH*60).all()
+    sessions = Session.query.filter(Session.time < time.time() - authentication.SESSION_LENGTH*60).all()
     
     for curr in sessions:
         db.session.delete(curr)
@@ -24,56 +19,64 @@ def delete_old_sessions():
 def test():
     return json.dumps("working")
 
-@app.route("/sendInvoice", methods = ["POST"])
+@app.route("/invoice/extract_and_send/v1", methods = ["POST"])
+@app.route("/sendInvoice", methods = ["POST"])                  #deprecated route
 def sendInvoiceEmail():
     #Check authentication
     token = request.headers.get('token')
-    user_id = check_token(token)
+    user_id = authentication.check_token(token)
     XML = request.files.get('file')
     print("XML OUTPUT")
     if XML == None:
-        commReport = communication_report([1], datetime.now())
+        comm_Report = commReport.communication_report([1], datetime.now())
     else:
         xml = XML.read()
-        commReport, email_address = emailSystem.send_email(xml, datetime.now())
+        comm_Report, email_address = emailSystem.send_email(xml, datetime.now())
+        log.log_send_invoice(user_id, email_address)
     
-        log_send_invoice(user_id, email_address)
-    
-    return commReport
+    return comm_Report
 
-@app.route("/emailInvoice", methods = ["POST"])
+@app.route("/invoice/send_to_email/v1", methods = ["POST"])
+@app.route("/emailInvoice", methods = ["POST"])                 #deprecated route
 def emailInvoice():
     token = request.headers.get('token')
     email = request.headers.get('email')
-    user_id = check_token(token)
+    user_id = authentication.check_token(token)
     
     XML = request.files.get('file')
     xml = XML.read() 
     commReport, email_address = emailSystem.send_to_email(xml, email, datetime.now())
     
-    log_send_invoice(user_id, email_address)
+    log.log_send_invoice(user_id, email_address)
     
     return commReport
 
-@app.route("/createNewUser", methods = ["POST"])
+@app.route("/create/newuser", methods = ["POST"])
+@app.route("/createNewUser", methods = ["POST"])                #deprecated route
 def createNewUser():
     data = request.get_json()
-    return json.dumps(create_user(data))
+    retval = authentication.create_user(data)
+    return json.dumps(retval)
 
-@app.route("/newSession", methods = ["POST"])
+@app.route("/session/start", methods = ["POST"])
+@app.route("/newSession", methods = ["POST"])                   #deprecated route
 def newSession():
     
     data = request.get_json()
     
-    return json.dumps(create_session(data['username'], data['password']))
+    retval = authentication.create_session(data['username'], data['password'])
+    return json.dumps(retval)
 
-@app.route("/endSession", methods = ['POST'])
+@app.route("/session/end", methods = ['POST'])
+@app.route("/endSession", methods = ['POST'])                   #deprecated route
 def endSession():
     data = request.get_json()
-    
-    return json.dumps(remove_session(data['token']))
-@app.route("/healthCheck", methods = ["GET"])
+    retval = authentication.remove_session(data['token'])
+    return json.dumps()
+
+@app.route("/health/check/v1", methods = ["GET"])
+@app.route("/healthCheck", methods = ["GET"])                   #deprecated route
 def getHealthCheck():
     healthInfo = healthCheck.healthCheckInfo()
-    log_health_check()
+    log.log_health_check()
     return json.dumps(healthInfo)
