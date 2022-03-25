@@ -55,25 +55,36 @@ def emailInvoice():
 @app.route("/createNewUser", methods = ["POST"])                #deprecated route
 def createNewUser():
     data = request.get_json()
-    retval = authentication.create_user(data)
-    return json.dumps(retval)
+
+    response, user_id = authentication.create_user(data)
+
+    log.log_authentication(user_id, call_type="createNewUser")
+
+    return json.dumps(response)
 
 @app.route("/session/start", methods = ["POST"])
 @app.route("/newSession", methods = ["POST"])                   #deprecated route
 def newSession():
     
     data = request.get_json()
+
+    response, user_id = authentication.create_session(data['username'], data['password'])
+
+    log.log_authentication(user_id, call_type="newSession")
     
-    retval = authentication.create_session(data['username'], data['password'])
-    return json.dumps(retval)
+    return json.dumps(response)
 
 @app.route("/session/end", methods = ['POST'])
 @app.route("/endSession", methods = ['POST'])                   #deprecated route
 def endSession():
     data = request.get_json()
-    retval = authentication.remove_session(data['token'])
-    return json.dumps(retval)
 
+    response, user_id = authentication.remove_session(data['token'])
+
+    log.log_authentication(user_id, call_type="endSession")
+
+    return json.dumps(response)
+    
 @app.route("/health/check/v1", methods = ["GET"])
 @app.route("/healthCheck", methods = ["GET"])                   #deprecated route
 def getHealthCheck():

@@ -36,6 +36,7 @@ def create_user(request):
     {
         'success' : (Boolean)
     }
+    user_id (Integer)
     """
 
     # Check for valid email
@@ -66,7 +67,7 @@ def create_user(request):
     db.session.add(new_user)
     db.session.commit()
     
-    return {'success' : True}
+    return {'success' : True}, new_user.id
 
 def create_session(username, password):
     """
@@ -84,6 +85,7 @@ def create_session(username, password):
     {
         'token' : (String)
     }
+    user_id (Integer)
     """
     
     password = hash(password)
@@ -100,7 +102,7 @@ def create_session(username, password):
 
     token = jwt.encode({'username' : user.username, 'session_id' : new_session.id}, SECRET,  algorithm='HS256')
 
-    return {'token' : token}
+    return {'token' : token}, user.id
 
 def remove_session(token):
     """
@@ -115,13 +117,16 @@ def remove_session(token):
     Returns
     -------
     {}
+    user_id (Integer)
     """
     session = load_token(token)
     
+    user_id = session.userId
+
     db.session.delete(session)
     db.session.commit()
     
-    return {}
+    return {}, user_id
 
 def check_token(token):
     """
