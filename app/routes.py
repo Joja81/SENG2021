@@ -3,7 +3,7 @@ import json
 from app.functions import healthCheck, emailSystem, authentication, commReport, log
 from flask import current_app as app, request
 import time
-from app.models import Session, db, User, Call
+from app.models import Session, db
 
 
 
