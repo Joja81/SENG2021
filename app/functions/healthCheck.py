@@ -1,4 +1,3 @@
-import time
 from app import startTime
 from datetime import datetime
 
