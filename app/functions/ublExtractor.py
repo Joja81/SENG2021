@@ -76,10 +76,6 @@ def invoice_contents(xml):
     seller = party.find('cac:PartyName',NAMESPACE)
     sender = seller.find('cbc:Name',NAMESPACE).text
 
-    print({'company' : sender, 'issue': issue, 
-        'due' : due, 'currency': currency, 
-        'payable': totalpayable})
-
     return {'company' : sender, 'issue': issue, 
         'due' : due, 'currency': currency, 
         'payable': totalpayable}
