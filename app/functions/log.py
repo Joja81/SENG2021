@@ -1,5 +1,3 @@
-
-
 import time
 from app.models import db, Call
 
