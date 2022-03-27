@@ -37,6 +37,7 @@ def send_email(xml: str, timer_start: datetime):
     error_codes = []
     
     contacts = ublExtractor.customerContact(xml)
+    info = ublExtractor.invoice_contents(xml)
 
     # check xml exists
     if (xml == None or xml == ''):
@@ -54,7 +55,7 @@ def send_email(xml: str, timer_start: datetime):
 
     #create email
     msg = MIMEMultipart()
-    msg['Subject'] = (f'Invoice from {contacts["bill_name"]}')
+    msg['Subject'] = (f'Invoice from {contacts["bill_name"]} at {info["company"]}')
     msg['From'] = (f'{contacts["bill_email"]}')
     msg['To'] = (f'{contacts["cust_email"]}')
     message = f"""
@@ -62,10 +63,16 @@ def send_email(xml: str, timer_start: datetime):
             <head></head>
             <body>
                 <p>Hello {contacts["cust_name"]},<br>
-                    Attached is your invoice.<br>
+                    You were issued an invoice from {info["company"]}
+                    on {info["issue"]}. <br>
+                    The total payable amount for this invoice is
+                    {info["currency"]} {info["payable"]}.<br>
+                    Please make a payment by {info["due"]} <br>
+                    Attached is an xml copy of your invoice.<br>
                     Kind regards,<br>
                     {contacts["bill_name"]} <br>
-                    {contacts["bill_email"]}.
+                    {info["company"]} <br>
+                    {contacts["bill_email"]}
                 </p>
             </body>
         </html>
@@ -94,7 +101,7 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
     """
     error_codes = []
     # new extractor for biller could be written, this will work for now.
-    contacts = {'cust_email': email, 'bill_name': 'FUDGE'}
+    contacts = {'cust_email': email}
 
     # check xml exists
     if (xml == None or xml == ''):
@@ -112,7 +119,7 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
 
     #create email
     msg = MIMEMultipart()
-    msg['Subject'] = (f'Invoice from {contacts["bill_name"]}')
+    msg['Subject'] = (f'New Invoice')
     msg['from'] = (f'se2y22g21@gmail.com')
     msg['To'] = (f'{contacts["cust_email"]}')
     message = f"""
@@ -121,8 +128,6 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
             <body>
                 <p>Hello,<br>
                     Attached is your invoice.<br>
-                    Kind regards,<br>
-                    {contacts["bill_name"]}. <br>
                 </p>
             </body>
         </html>
