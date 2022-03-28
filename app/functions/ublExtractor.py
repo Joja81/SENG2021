@@ -38,3 +38,46 @@ def customerContact(xml):
     "bill_email": contseller.find('cbc:ElectronicMail',NAMESPACE).text}
 
     return contact
+
+
+def invoice_contents(xml):
+    """
+    Extracts all relevant data to render a neat email with xml contents
+
+    Searches through and extracts
+    Parameters
+    ----------
+    xml : string
+        an `XML` formatted with ``PEPPOL BIS Billing 3.0 standard``
+
+    Returns
+    -------
+    ``{'compay' : '<company name>', 'issue': '<dd/mm/yyyy>' 
+        'due' : '<dd/mm/yyyy>', 'currency': '<CurCode>', 
+        'payable': '<payable amount>'}``
+    """
+
+    invoice = xmltree.fromstring(xml)
+
+    # total amount
+    LMtotal = invoice.find('cac:LegalMonetaryTotal',NAMESPACE)
+    totalpayable = LMtotal.find('cbc:PayableAmount',NAMESPACE).text
+    # currency code
+    currency = invoice.find('cbc:DocumentCurrencyCode',NAMESPACE).text
+
+    # due date
+    due = invoice.find('cbc:DueDate',NAMESPACE).text
+    # issue date
+    issue = invoice.find('cbc:IssueDate',NAMESPACE).text
+
+    # sender
+    supplier = invoice.find('cac:AccountingSupplierParty', NAMESPACE)
+    party = supplier.find('cac:Party',NAMESPACE)
+    seller = party.find('cac:PartyName',NAMESPACE)
+    sender = seller.find('cbc:Name',NAMESPACE).text
+
+    return {'company' : sender, 'issue': issue, 
+        'due' : due, 'currency': currency, 
+        'payable': totalpayable}
+
+
