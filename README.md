@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/seng-fudge/backend_api/branch/main/graph/badge.svg?token=PDWFB8FF9H)](https://codecov.io/gh/seng-fudge/backend_api)
 # Fudge
 
 SENG2021 T1 2022 project.
