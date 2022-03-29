@@ -107,7 +107,7 @@
             <cac:Contact>
                 <cbc:Name>Lisa Johnson</cbc:Name>
                 <cbc:Telephone>0261234567</cbc:Telephone>
-                <cbc:ElectronicMail>EdAmbro02+testing@gmail.com</cbc:ElectronicMail>
+                <cbc:ElectronicMail>ABADEMAIL</cbc:ElectronicMail>
             </cac:Contact>
         </cac:Party>
     </cac:AccountingCustomerParty>
@@ -122,7 +122,7 @@
 
        <cac:PartyLegalEntity>
            <cbc:CompanyID schemeID="0151">91888222000</cbc:CompanyID>
-       </cac:PartyLegalEntity>    
+       </cac:PartyLegalEntity>
     </cac:PayeeParty>
 
     <cac:TaxRepresentativeParty>
@@ -147,7 +147,7 @@
                 <cac:TaxScheme>
                     <cbc:ID>GST</cbc:ID>
                 </cac:TaxScheme>
-            </cac:PartyTaxScheme> 
+            </cac:PartyTaxScheme>
     </cac:TaxRepresentativeParty>
 
 
@@ -184,7 +184,7 @@
             <cac:FinancialInstitutionBranch>
                 <cbc:ID>BSB Number</cbc:ID>
             </cac:FinancialInstitutionBranch>
-        </cac:PayeeFinancialAccount>  
+        </cac:PayeeFinancialAccount>
     </cac:PaymentMeans>
     <cac:PaymentTerms>
         <cbc:Note>Payment within 30 days</cbc:Note>
@@ -231,7 +231,7 @@
         <cbc:PrepaidAmount currencyID="AUD">0.00</cbc:PrepaidAmount>
         <cbc:PayableAmount currencyID="AUD">1636.14</cbc:PayableAmount>
     </cac:LegalMonetaryTotal>
- 
+
 
     <cac:InvoiceLine>
        <cbc:ID>1</cbc:ID>
@@ -240,15 +240,15 @@
        <cbc:LineExtensionAmount currencyID= "AUD">299.90</cbc:LineExtensionAmount>
            <cbc:AccountingCost>Consulting Fees</cbc:AccountingCost>
            <cac:InvoicePeriod>
-           <cbc:StartDate>2019-06-01</cbc:StartDate> 
-           <cbc:EndDate>2019-07-30</cbc:EndDate> 
+           <cbc:StartDate>2019-06-01</cbc:StartDate>
+           <cbc:EndDate>2019-07-30</cbc:EndDate>
        </cac:InvoicePeriod>
        <cac:OrderLineReference>
             <cbc:LineID>123</cbc:LineID>
        </cac:OrderLineReference>
        <cac:DocumentReference>
             <cbc:ID schemeID="HWB">9000074677</cbc:ID>
-            <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode> 
+            <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode>
        </cac:DocumentReference>
 
     <cac:Item>
@@ -332,15 +332,15 @@
        <cbc:LineExtensionAmount currencyID= "AUD">187.50</cbc:LineExtensionAmount>
            <cbc:AccountingCost>Consulting Fees</cbc:AccountingCost>
            <cac:InvoicePeriod>
-           <cbc:StartDate>2019-06-01</cbc:StartDate> 
-           <cbc:EndDate>2019-07-30</cbc:EndDate> 
+           <cbc:StartDate>2019-06-01</cbc:StartDate>
+           <cbc:EndDate>2019-07-30</cbc:EndDate>
        </cac:InvoicePeriod>
        <cac:OrderLineReference>
             <cbc:LineID>123</cbc:LineID>
        </cac:OrderLineReference>
        <cac:DocumentReference>
             <cbc:ID schemeID="HWB">9000074677</cbc:ID>
-            <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode> 
+            <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode>
        </cac:DocumentReference>
 
     <cac:Item>
