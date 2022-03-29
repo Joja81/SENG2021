@@ -22,7 +22,7 @@ def validate_email(email):
 
 def send_email(xml: str, timer_start: datetime):
     """
-    Sends UBL invoice to the first ``cac:AccountingCustomerParty`` entry 
+    Sends UBL invoice to the first ``cac:AccountingCustomerParty`` entry
     in said UBL.
 
     Parameters
@@ -35,7 +35,7 @@ def send_email(xml: str, timer_start: datetime):
     -------
     """
     error_codes = []
-    
+
     contacts = ublExtractor.customerContact(xml)
     info = ublExtractor.invoice_contents(xml)
 
@@ -44,13 +44,13 @@ def send_email(xml: str, timer_start: datetime):
         error_codes.append(1)
 
     # check size of xml
-    if (sys.getsizeof(xml) > 10485760):
+    if (sys.getsizeof(xml) >= 10485760):
         error_codes.append(2)
-    
+
     if not validate_email(contacts["cust_email"]):
         error_codes.append(3)
 
-    if error_codes:
+    if len(error_codes) > 0:
         raise InputError(description=communication_report(error_codes, timer_start))
 
     #create email
@@ -81,7 +81,7 @@ def send_email(xml: str, timer_start: datetime):
     body = MIMEText(message,'HTML')
     msg.attach(body)
     msg.attach(MIMEApplication(xml, Name='invoice.xml'))
-    
+
     return send_mail(contacts, msg, error_codes, timer_start, False)
 
 def send_to_email(xml: str, email: str, timer_start: datetime):
@@ -110,7 +110,7 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
     # check size of xml
     if (sys.getsizeof(xml) > 10485760):
         error_codes.append(2)
-    
+
     if not validate_email(contacts["cust_email"]):
         error_codes.append(3)
 
@@ -142,7 +142,7 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
 def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
     try:
         mail.sendmail(msg['From'], msg['To'], msg.as_string())
-        
+
     except smtplib.SMTPSenderRefused:
         if not recall:
             SMTP_connect()
@@ -152,7 +152,7 @@ def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
         error_codes.append(4)
     except smtplib.SMTPRecipientsRefused:
         error_codes.append(5)
-    
+
     return communication_report(error_codes, timer_start), contacts["cust_email"]
 
 def exit():

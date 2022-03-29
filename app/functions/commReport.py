@@ -27,12 +27,12 @@ def communication_report(error_codes: list, time_sent: datetime):
 
     """
     report_dict = {
-        "sentMail": error_codes == [],  
+        "sentMail": error_codes == [],
         "readable_errors": '',
         "xmlFound": 1 not in error_codes,
-        "xmlRightSize": (1 and 2) not in error_codes,
-        "emailValid": 3 not in error_codes,
-        "connectedToMail": 4 not in error_codes,
+        "xmlRightSize": 2 in error_codes,
+        "emailValid": 3 in error_codes,
+        "connectedToMail": 4 in error_codes,
         "timeSent": time_sent.strftime("%m/%d/%Y, %H:%M:%S"),
         "timeTaken": (datetime.now() - time_sent).total_seconds()
     }

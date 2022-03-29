@@ -6,19 +6,18 @@ from tests.http.fixtures import test_app
 def test_xmlNotFound():
 
     with test_app.test_client() as app:
-    
+
         token = create_user(app)
 
         print("token" + token)
         print("xml not found test")
-        
+
         response = app.post("sendInvoice",  headers={
                                 'token': token},)
         assert json.loads(response.data)['sentMail'] == False
         assert json.loads(response.data)['xmlFound'] == False
         print(response.data)
 
-@pytest.mark.skip(reason="post req needs to be changed")
 def test_xmlTooBig():
     with test_app.test_client() as app:
 
@@ -27,16 +26,17 @@ def test_xmlTooBig():
         print("token" + token)
         print("xml too big test")
 
-        with open('', 'rb') as new_file:
-        
-            file = {'./tests/files/10MB_Test': new_file}
+        with open('./tests/files/10mb_test.txt', 'rb') as new_file:
+
+            file = {'file': new_file}
             response = app.post("sendInvoice",  headers={
-                                    'token': token}, files=file,)
+                                    'token': token}, data = {
+                                        "file" : (file, "invoice.xml")
+                                        },)
             assert json.loads(response.data)['sentMail'] == False
             assert json.loads(response.data)['xmlRightSize'] == False
             print(response.data)
 
-@pytest.mark.skip(reason="post req needs to be changed")
 def test_invalidEmail():
 
     with test_app.test_client() as app:
@@ -47,32 +47,15 @@ def test_invalidEmail():
         print("invalid email test")
 
         with open('./tests/files/InvalidEmail.xml', 'rb') as new_file:
-        
+
             file = {'file': new_file}
             response = app.post("sendInvoice",  headers={
-                                    'token': token}, files=file,)
+                                    'token': token}, data = {
+                                        "file" : (file, "invoice.xml")
+                                        },)
             assert json.loads(response.data)['sentMail'] == False
             assert json.loads(response.data)['emailValid'] == False
             print(response.data)
-
-@pytest.mark.skip(reason="no way of currently testing this")
-def test_emailNotSent():
-    
-    with test_app.test_client() as app:
-        token = create_user(app)
-
-        print("token" + token)
-        print("email not sent test")
-        
-        with open('./tests/files/ValidEmailNotSent.xml', 'rb') as file:
-
-            response = app.post("/sendInvoice",  headers={
-                                'token': token}, data = {
-                                "file" : (file, "invoice.xml")
-                                })
-            assert json.loads(response.data)['sentMail'] == False
-            print(response.data)
-
 
 def create_user(app):
     resp = app.post("/createNewUser",
