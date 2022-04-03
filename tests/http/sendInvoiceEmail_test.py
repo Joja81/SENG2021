@@ -51,7 +51,7 @@ def test_email_string():
         token = create_user()
 
         print("token" + token)
-        with open('./tests/files/AUInvoice.xml', 'r') as file:
+        with open('./tests/files/AUInvoice.xml', 'r') as file: # pylint: disable=unspecified-encoding
             response = app.post("/invoice/extract_and_send/v2",  headers={
                                 'token': token, 'email': 'edambro02+testing@gmail.com'}, json = {
                                 "file" : file.read()
