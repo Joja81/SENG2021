@@ -10,7 +10,7 @@ from app.models import Session, db
 @app.before_request
 def delete_old_sessions():
     sessions = Session.query.filter(Session.time < time.time() - authentication.SESSION_LENGTH*60).all()
-    
+
     for curr in sessions:
         db.session.delete(curr)
     db.session.commit()
@@ -33,7 +33,23 @@ def sendInvoiceEmail():
         xml = XML.read()
         comm_Report, email_address = emailSystem.send_email(xml, datetime.now())
         log.log_send_invoice(user_id, email_address)
-    
+
+    return comm_Report
+
+@app.route("/invoice/extract_and_send/v2", methods = ["POST"])
+def send_invoice_string_Email():
+    #Check authentication
+    token = request.headers.get('token')
+    user_id = authentication.check_token(token)
+    data = request.get_json()
+    print(data)
+    XML = data["file"]
+    if XML == None:
+        comm_Report = commReport.communication_report([1], datetime.now())
+    else:
+        comm_Report, email_address = emailSystem.send_email(XML, datetime.now())
+        log.log_send_invoice(user_id, email_address)
+
     return comm_Report
 
 @app.route("/invoice/send_to_email/v1", methods = ["POST"])
@@ -42,13 +58,13 @@ def emailInvoice():
     token = request.headers.get('token')
     email = request.headers.get('email')
     user_id = authentication.check_token(token)
-    
+
     XML = request.files.get('file')
-    xml = XML.read() 
+    xml = XML.read()
     commReport, email_address = emailSystem.send_to_email(xml, email, datetime.now())
-    
+
     log.log_send_invoice(user_id, email_address)
-    
+
     return commReport
 
 @app.route("/create/newuser", methods = ["POST"])
@@ -65,13 +81,13 @@ def createNewUser():
 @app.route("/session/start", methods = ["POST"])
 @app.route("/newSession", methods = ["POST"])                   #deprecated route
 def newSession():
-    
+
     data = request.get_json()
 
     response, user_id = authentication.create_session(data['username'], data['password'])
 
     log.log_authentication(user_id, call_type="newSession")
-    
+
     return json.dumps(response)
 
 @app.route("/session/end", methods = ['POST'])
@@ -84,7 +100,7 @@ def endSession():
     log.log_authentication(user_id, call_type="endSession")
 
     return json.dumps(response)
-    
+
 @app.route("/health/check/v1", methods = ["GET"])
 @app.route("/healthCheck", methods = ["GET"])                   #deprecated route
 def getHealthCheck():

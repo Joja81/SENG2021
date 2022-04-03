@@ -28,7 +28,7 @@ def test_basic():
                                 'token': token}, data = {
                                 "file" : (file, "invoice.xml")
                                 })
-            
+
         print(response.data)
         assert response.status_code == 200
 
@@ -42,10 +42,24 @@ def test_email():
                                 'token': token, 'email': 'edambro02+testing@gmail.com'}, data = {
                                 "file" : (file, "invoice.xml")
                                 })
-        
+
         print(response.data)
         assert response.status_code == 200
-        
+
+def test_email_string():
+    with test_app.test_client() as app:
+        token = create_user()
+
+        print("token" + token)
+        with open('./tests/files/AUInvoice.xml', 'r') as file: # pylint: disable=unspecified-encoding
+            response = app.post("/invoice/extract_and_send/v2",  headers={
+                                'token': token, 'email': 'edambro02+testing@gmail.com'}, json = {
+                                "file" : file.read()
+                                })
+
+        print(response.data)
+        assert response.status_code == 200
+
 def create_user():
     with test_app.test_client() as app:
         app.post("/createNewUser",
@@ -54,7 +68,7 @@ def create_user():
                       "username": f"Username{i+100}",
                       "password": "password"})
 
-        resp = app.post("/newSession", 
+        resp = app.post("/newSession",
                     json={'username': "Username4",
                         'password': "password"})
 
