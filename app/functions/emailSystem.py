@@ -141,7 +141,10 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
 
 def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
     try:
+        SMTP_connect()
         mail.sendmail(msg['From'], msg['To'], msg.as_string())
+        mail.quit()
+
 
     except smtplib.SMTPSenderRefused:
         if not recall:
