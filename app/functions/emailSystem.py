@@ -4,17 +4,16 @@ from email.mime.text import MIMEText
 import re
 from app.functions.commReport import communication_report
 from app.functions.error import InputError, ServiceUnavailableError
-import smtplib
+import smtplib, ssl
 from app.functions import ublExtractor
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
 import sys
 
-mail = smtplib.SMTP(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'))
-def SMTP_connect():
-    mail.starttls()
-    mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
+
+context = ssl.create_default_context()
+mail = smtplib.SMTP_SSL(host= os.environ.get('SMTP_HOST'), port=os.environ.get('SMTP_PORT'), context=context)
 
 def validate_email(email):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
@@ -141,15 +140,8 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
 
 def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
     try:
-        SMTP_connect()
+        mail.login(os.environ.get('SMTP_USERNAME'), os.environ.get('SMTP_PASSWORD'))
         mail.sendmail(msg['From'], msg['To'], msg.as_string())
-        mail.quit()
-
-
-    except smtplib.SMTPSenderRefused:
-        if not recall:
-            SMTP_connect()
-            send_mail(contacts, msg, error_codes, timer_start, True)
 
     except smtplib.SMTPHeloError:
         error_codes.append(4)
@@ -158,8 +150,8 @@ def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
 
     except:
         if not recall:
-            SMTP_connect()
             send_mail(contacts, msg, error_codes, timer_start, True)
+            exit()
         else:
             raise ServiceUnavailableError(description="Something went wrong whilst sending the email, please try again later") #pylint: disable=raise-missing-from
 
@@ -168,7 +160,3 @@ def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
 
 def exit():
     mail.quit()
-
-
-
-SMTP_connect()
