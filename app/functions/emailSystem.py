@@ -143,7 +143,7 @@ def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
     try:
         mail.sendmail(msg['From'], msg['To'], msg.as_string())
 
-    except smtplib.SMTPSenderRefused or smtplib.SMTPServerDisconnected:
+    except smtplib.SMTPSenderRefused:
         if not recall:
             SMTP_connect()
             send_mail(contacts, msg, error_codes, timer_start, True)
@@ -158,7 +158,7 @@ def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
             SMTP_connect()
             send_mail(contacts, msg, error_codes, timer_start, True)
         else:
-            raise ServiceUnavailableError(description="Something went wrong whilst sending the email, please try again later")
+            raise ServiceUnavailableError(description="Something went wrong whilst sending the email, please try again later") #pylint: ignore: raise-missing-from
 
 
     return communication_report(error_codes, timer_start), contacts["cust_email"]
