@@ -158,7 +158,7 @@ def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
             SMTP_connect()
             send_mail(contacts, msg, error_codes, timer_start, True)
         else:
-            raise ServiceUnavailableError(description="Something went wrong whilst sending the email, please try again later") #pylint: ignore: raise-missing-from
+            raise ServiceUnavailableError(description="Something went wrong whilst sending the email, please try again later") #pylint: disable: raise-missing-from
 
 
     return communication_report(error_codes, timer_start), contacts["cust_email"]
