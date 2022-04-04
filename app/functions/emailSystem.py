@@ -3,7 +3,7 @@ from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 import re
 from app.functions.commReport import communication_report
-from app.functions.error import InputError
+from app.functions.error import InputError, ServiceUnavailableError
 import smtplib
 from app.functions import ublExtractor
 from email.mime.multipart import MIMEMultipart
@@ -152,6 +152,14 @@ def send_mail(contacts, msg, error_codes, timer_start: datetime, recall:bool):
         error_codes.append(4)
     except smtplib.SMTPRecipientsRefused:
         error_codes.append(5)
+
+    except:
+        if not recall:
+            SMTP_connect()
+            send_mail(contacts, msg, error_codes, timer_start, True)
+        else:
+            raise ServiceUnavailableError(description="Something went wrong whilst sending the email, please try again later") #pylint: disable=raise-missing-from
+
 
     return communication_report(error_codes, timer_start), contacts["cust_email"]
 
