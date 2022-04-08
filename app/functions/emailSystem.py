@@ -19,6 +19,70 @@ def validate_email(email):
     email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
     return (re.fullmatch(email_regex,email))
 
+def send_pdf_email(xml: str, pdf, timer_start: datetime):
+    """
+    Sends UBL invoice to the first ``cac:AccountingCustomerParty`` entry
+    in said UBL.
+
+    Parameters
+    ----------
+    xml : string
+        an `XML` formatted with ``PEPPOL BIS Billing 3.0 standard``
+
+    Returns
+    Comm report, email_adress_sent
+    -------
+    """
+    error_codes = []
+
+    contacts = ublExtractor.customerContact(xml)
+    info = ublExtractor.invoice_contents(xml)
+
+    # check xml exists
+    if (xml == None or xml == ''):
+        error_codes.append(1)
+
+    # check size of xml
+    if (sys.getsizeof(xml) >= 10485760):
+        error_codes.append(2)
+
+    if not validate_email(contacts["cust_email"]):
+        error_codes.append(3)
+
+    if len(error_codes) > 0:
+        raise InputError(description=communication_report(error_codes, timer_start))
+
+    #create email
+    msg = MIMEMultipart()
+    msg['Subject'] = (f'Invoice from {contacts["bill_name"]} at {info["company"]}')
+    msg['From'] = (f'{contacts["bill_email"]}')
+    msg['To'] = (f'{contacts["cust_email"]}')
+    message = f"""
+        <html>
+            <head></head>
+            <body>
+                <p>Hello {contacts["cust_name"]},<br>
+                    You were issued an invoice from {info["company"]}
+                    on {info["issue"]}. <br>
+                    The total payable amount for this invoice is
+                    {info["currency"]} {info["payable"]}.<br>
+                    Please make a payment by {info["due"]} <br>
+                    Attached is an pdf copy of your invoice.<br>
+                    Kind regards,<br>
+                    {contacts["bill_name"]} <br>
+                    {info["company"]} <br>
+                    {contacts["bill_email"]}
+                </p>
+            </body>
+        </html>
+    """
+
+    body = MIMEText(message,'HTML')
+    msg.attach(body)
+    msg.attach(MIMEApplication(pdf, Name='invoice.pdf'))
+
+    return send_mail(contacts, msg, error_codes, timer_start, False)
+
 def send_email(xml: str, timer_start: datetime):
     """
     Sends UBL invoice to the first ``cac:AccountingCustomerParty`` entry
