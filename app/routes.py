@@ -52,6 +52,21 @@ def send_invoice_string_Email():
 
     return comm_Report
 
+@app.route("/invoice/extract_and_send/pdf", methods = ["POST"])
+def sendInvoiceEmail():
+    #Check authentication
+    token = request.headers.get('token')
+    user_id = authentication.check_token(token)
+    XML = request.files.get('file')
+    if XML == None:
+        comm_Report = commReport.communication_report([1], datetime.now())
+    else:
+        xml = XML.read()
+        comm_Report, email_address = emailSystem.send_email(xml, datetime.now())
+        log.log_send_invoice(user_id, email_address)
+
+    return comm_Report
+
 @app.route("/invoice/send_to_email/v1", methods = ["POST"])
 @app.route("/emailInvoice", methods = ["POST"])                 #deprecated route
 def emailInvoice():
