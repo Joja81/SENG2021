@@ -71,6 +71,20 @@ def test_email_pdf():
                 )
                 assert response.status_code == 200
 
+def test_no_data_email_pdf():
+    with test_app.test_client() as app:
+        token = create_user()
+        with open('./tests/files/AUInvoice.xml','rb') as xml:
+            with open('./tests/files/invoice.pdf', 'rb') as pdf:
+
+                response = app.post("/invoice/extract_and_send/pdf", headers={
+                    'token': token
+                    },
+                    data = {}
+                )
+                #we need to return a different code on a partial success...
+                assert response.status_code == 200
+
 def create_user():
     with test_app.test_client() as app:
 
