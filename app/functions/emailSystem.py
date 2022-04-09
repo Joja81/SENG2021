@@ -38,10 +38,6 @@ def send_pdf_email(xml: str, pdf, timer_start: datetime):
     contacts = ublExtractor.customerContact(xml)
     info = ublExtractor.invoice_contents(xml)
 
-    # check xml exists
-    if (xml == None or xml == ''):
-        error_codes.append(1)
-
     # check size of xml
     if (sys.getsizeof(xml) >= 10485760):
         error_codes.append(2)
@@ -103,7 +99,7 @@ def send_email(xml: str, timer_start: datetime):
     info = ublExtractor.invoice_contents(xml)
 
     # check xml exists
-    if (xml == None or xml == ''):
+    if (xml == ''):
         error_codes.append(1)
 
     # check size of xml
@@ -167,7 +163,7 @@ def send_to_email(xml: str, email: str, timer_start: datetime):
     contacts = {'cust_email': email}
 
     # check xml exists
-    if (xml == None or xml == ''):
+    if (xml == ''):
         error_codes.append(1)
 
     # check size of xml
