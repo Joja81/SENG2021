@@ -1,7 +1,4 @@
 import json
-import os
-from io import BytesIO
-import werkzeug
 from config import url
 from tests.http.fixtures import test_app
 from werkzeug.datastructures import FileStorage, FileMultiDict
@@ -60,13 +57,33 @@ def test_email_string():
         print(response.data)
         assert response.status_code == 200
 
+def test_email_pdf():
+    with test_app.test_client() as app:
+        token = create_user()
+        with open('./tests/files/AUInvoice.xml','rb') as xml:
+            with open('./tests/files/invoice.pdf', 'rb') as pdf:
+
+                response = app.post("/invoice/extract_and_send/pdf", headers={
+                    'token': token
+                    },
+                    data = {"file": (xml, "invoice.xml"),
+                    "pdf": (pdf, "invoice.pdf")}
+                )
+                assert response.status_code == 200
+
+def test_no_data_email_pdf():
+    with test_app.test_client() as app:
+        token = create_user()
+        response = app.post("/invoice/extract_and_send/pdf", headers={
+            'token': token
+            },
+            data = {}
+        )
+        #we need to return a different code on a partial success...
+        assert response.status_code == 200
+
 def create_user():
     with test_app.test_client() as app:
-        app.post("/createNewUser",
-                  json={
-                      "email": f"email{i+100}@email.com",
-                      "username": f"Username{i+100}",
-                      "password": "password"})
 
         resp = app.post("/newSession",
                     json={'username': "Username4",
