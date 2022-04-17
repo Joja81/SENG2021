@@ -5,11 +5,7 @@ from flask import Flask
 import signal
 
 
-
-from app.functions import emailSystem
-
 def graceful_exit(*args):
-    emailSystem.exit()
     exit(0)
 
 app = init_app()
